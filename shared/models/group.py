@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Type
 import json
+# from shared/models/user import User
 
 class Group:
   """ Represents a group of people able to discuss with each other.
@@ -8,9 +9,10 @@ class Group:
   Attributes:
     id (Optional[str]): Id of the group in the database.
     name (str): Name of the group.
+    l_users (list[User]): 
   ---
   Methods:
-    __eq__(Self, Self) -> bool: Check for equality between two groups.
+    __eq__(Self, Other) -> bool: Check for equality between two groups.
     __init__(Self, str, Optional[str]): Create a new group.
     __repr__(Self) -> str: Convert the instance to a displayable string
     __str__(Self) -> str: Convert the instance to a string
@@ -44,12 +46,12 @@ class Group:
     self.id = id
     self.name = name
 
-  def __eq__(self: Self, other: Self) -> bool:
+  def __eq__(self: Self, other: Other) -> bool:
     """ Check for equality between two instances.
     ---
     Parameters:
       self (Self): Current instance.
-      other (Self): Instance to compare to.
+      other (Group): Instance to compare to.
     ---
     Returns:
       (bool): True iff the two instances have the same attributes.
@@ -149,7 +151,7 @@ class Group:
     """ Convert the current instance to a json string.
     The id field is absent if None.
     ---
-    Paramters:
+    Parameters:
       self (Self): Current instance.
     ---
     Returns:
@@ -173,26 +175,15 @@ class Group:
       return f'{{"id": "{self.id}", "name": "{self.name}"}}'
 
   def __repr__(self: Self) -> str:
-    """ Convert the current instance to a json string.
+    """ Convert the current instance to a displayable string.
     The id field is absent if None.
     ---
-    Paramters:
+    Parameters:
       self (Self): Current instance.
     ---
     Returns:
       (str): Attributes of the current instance in a json-formatted
       string.
-    ---
-    Example:
-    ```python
-    group_name = 'my_group'
-    new_group1 = Group(group_name)
-    json_group1 = new_group1.to_json()
-    assert(json_group1 == '{"name": "my_group"}')
-    new_group2 = Group(group_name, id = '5')
-    json_group2 = new_group2.to_json()
-    assert(json_group2 == '{"id": "5", "name": "my_group"}')
-    ```
     """
     return self.to_json()
 
@@ -200,7 +191,7 @@ class Group:
     """ Convert the current instance to a json string.
     The id field is absent if None.
     ---
-    Paramters:
+    Parameters:
       self (Self): Current instance.
     ---
     Returns:
@@ -211,11 +202,11 @@ class Group:
     ```python
     group_name = 'my_group'
     new_group1 = Group(group_name)
-    json_group1 = new_group1.to_json()
-    assert(json_group1 == '{"name": "my_group"}')
+    str_group1 = str(new_group1)
+    assert(str_group1 == '{"name": "my_group"}')
     new_group2 = Group(group_name, id = '5')
-    json_group2 = new_group2.to_json()
-    assert(json_group2 == '{"id": "5", "name": "my_group"}')
+    str_group2 = str(new_group2)
+    assert(str_group2 == '{"id": "5", "name": "my_group"}')
     ```
     """
     return self.to_json()

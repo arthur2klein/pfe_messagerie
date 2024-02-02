@@ -6,7 +6,7 @@ def test_get_id_none():
   new_group1 = Group(group_name)
   assert(new_group1.get_id() == None)
 
-def test_get_id_not_nont():
+def test_get_id_not_none():
   group_name = 'my_group'
   new_group2 = Group(group_name, id = '5')
   assert(new_group2.get_id() == '5')
