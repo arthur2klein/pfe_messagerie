@@ -14,6 +14,30 @@ class Message:
         date (int): Date the message was send at.
     ---
     Methods:
+        __eq__(Self, Message) -> bool: Checks for equality between two
+        instances.
+        __init__(Self, str, str, str, int, Optional[str]): Creates a new
+        message.
+        __repr__(Self) -> str: Converts the current message to a displayable
+        string.
+        __str__(Self) -> str: Converts the current message to a string.
+        from_json(str) -> Self: Creates a new instance from a json string.
+        to_json(Self) -> str: Converts the current instance to a json string.
+        get_content(Self) -> str: Returns the content of the current message.
+        get_date(Self) -> int: Returns the date the current message was sent at.
+        get_id(Self) -> Optional[str]: Returns the id that the database gave to
+        the current message.
+        get_receiver_group_id(Self) -> str: Returns the id of the group who
+        received the message.
+        get_sender_id(Self) -> str: Returns the id of the user who sent the
+        message.
+        set_content(Self, str): Changes the content of the current message.
+        set_date(Self, int): Changes the date the current message was sent at.
+        set_id(Self, str): Changes the id of the current message.
+        set_receiver_group_id(Self, str): Changes the id of the group who
+        received the current message.
+        set_sender_id(Self, str): Changes the id of the user who sent the
+        current message.
     """
 
     def __init__(
@@ -22,7 +46,7 @@ class Message:
             sender_id: str,
             receiver_group_id: str,
             date: int,
-            id: Optional[int] = None
+            id: Optional[str] = None
             ):
         """ Creates a new message with the given attirbutes.
         ---
@@ -32,7 +56,7 @@ class Message:
             sender_id (str): Id of the user who sends the message.
             receiver_group_id (str): Id of the group that receive the message.
             date (int): Date the message was sent at.
-            id (Optional[int]): Id that the message gives to the message.
+            id (Optional[str]): Id that the message gives to the message.
         ---
         Example:
         ```python
