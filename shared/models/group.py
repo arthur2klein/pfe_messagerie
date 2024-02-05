@@ -34,11 +34,11 @@ class Group:
     """
 
     def __init__(
-        self: Self,
-        name: str,
-        id: Optional[str] = None,
-        l_users: list[User] = []
-    ):
+            self: Self,
+            name: str,
+            id: Optional[str] = None,
+            l_users: list[User] = []
+            ):
         """ Returns a discussion group.
         id will generally be set by the database.
         ---
@@ -56,9 +56,9 @@ class Group:
         """
         self.id = id
         self.name = name
-        self.l_users = l_users
+        self.l_users = l_users[:]
 
-    def __eq__(self: Self, other: Other) -> bool:
+    def __eq__(self: Self, other: Group) -> bool:
         """ Check for equality between two instances.
         ---
         Parameters:
@@ -73,16 +73,16 @@ class Group:
         group1 = Group('my_group', 'id')
         group2 = Group('my_group', 'id')
         group3 = Group('my_group')
-        group3 = Group('group', 'id')
+        group4 = Group('group', 'id')
         assert(group1 == group2)
-        assert(group1 != group2)
         assert(group1 != group3)
+        assert(group1 != group4)
         ```
         """
         if not(isinstance(other, Group)):
             return False
         return self.id == other.id and self.name == other.name
-        
+
     def get_id(self: Self) -> Optional[str]:
         """ Returns the id of the current group.
         Returns None if no id has been defined.
@@ -189,7 +189,7 @@ class Group:
             users_part = ''
         else:
             users_part =  f', "l_users": ' \
-                          f'"{[user.to_json() for user in self.l_users]}"'
+                    f'"{[user.to_json() for user in self.l_users]}"'
         return f'{{{id_part}"name": "{self.name}"{users_part}}}'
 
     def __repr__(self: Self) -> str:

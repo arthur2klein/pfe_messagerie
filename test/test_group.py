@@ -86,6 +86,10 @@ def test_get_users():
     group = Group('my_group', l_users = [user])
     assert(list(group.get_users()) == [user])
 
+def test_get_users_empty():
+    group = Group('my_group')
+    assert(list(group.get_users()) == [])
+
 def test_set_users():
     user = User('name', 'first_name', 'email', 0)
     group = Group('my_group')
@@ -99,6 +103,8 @@ def test_add_user():
     assert(list(group.get_users()) == [])
     group.add_user(user)
     assert(list(group.get_users()) == [user])
+    group = Group('my_group')
+    assert(list(group.get_users()) == [])
 
 def test_remove_user():
     user = User('name', 'first_name', 'email', 0)
@@ -109,10 +115,10 @@ def test_remove_user():
     assert(not(group.remove_user(user)))
 
 def test_contains_user():
+    print(f'Creating group')
+    group = Group('my_group')
     user = User('name', 'first_name', 'email', 0)
-    group = Group('my_group', l_users = [user])
-    assert(list(group.get_users()) == [user])
-    assert(group.remove_user(user))
-    assert(list(group.get_users()) == [])
-    assert(not(group.remove_user(user)))
+    assert(not(group.contains_user(user)))
+    group.add_user(user)
+    assert(group.contains_user(user))
 
