@@ -1,5 +1,5 @@
 from shared.models.message import Message
-from shared.servies.db_service import Db_service
+from shared.servies.service_bdd import Service_bdd
 
 class Message_iterator:
     """ Iterator over the list of message of a given group.
@@ -14,13 +14,13 @@ class Message_iterator:
         __next__(Self) -> Message: Advance the iterator to the next message.
     """
 
-    def __iter__(self: Self, group_id: str, db_access: Db_service) -> Self:
+    def __iter__(self: Self, group_id: str, db_access: Service_bdd) -> Self:
         """ Creates a new iterator for the given group.
         ---
         Parameters:
             self (Self): Current instance.
             group_id (str): Id of the group from which we will get the messages.
-            db_service (Db_service): Service that access to the database.
+            service_bdd (Service_bdd): Service that access to the database.
         ---
         Returns:
             (Self): Current instance.
