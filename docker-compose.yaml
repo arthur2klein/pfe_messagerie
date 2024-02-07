@@ -5,9 +5,9 @@ services:
     image: postgres:latest
     container_name: pfe-postgres-container
     environment:
-      POSTGRES_DB: mydatabase
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: pfe_database
+      POSTGRES_USER: my_user
+      POSTGRES_PASSWORD: my_password
     ports:
       - "5433:5432"
     volumes:

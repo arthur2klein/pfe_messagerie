@@ -1,3 +1,4 @@
+# Exits if a command fails
 set -e
 
 mkdir -p /var/log/postgresql
