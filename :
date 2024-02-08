@@ -841,7 +841,7 @@ class Service_bdd:
                     f'Could not get the user {user_id}: {e}'
                     )
         return User(*line[1:], id = line[0])
-
+        
     def get_user_auth(self: Self, auth_id: str) -> User:
         """ Returns the user with the given id in the authentification database.
         ---
@@ -937,57 +937,7 @@ class Service_bdd:
                 )
         service_bdd = Service_bdd()
         user_id = service_bdd.create_user(my_user)
-        new_values = User(
-                'new_name',
-                'first_name',
-                'email@test.com',
-                10000,
-                'auth_id'
-                )
-        user_id = service_bdd.set_user(my_user, new_values)
-        ```
-        """
-        query = ('UPDATE users '
-                 'SET name = %s, first_name = %s, '
-                 'email = %s, join_date = %s, '
-                 'auth_id = %s WHERE id = %s')
-        try:
-            self.change_query(
-                    query,
-                    [user.get_name(),
-                     user.get_first_name(),
-                     user.get_email(),
-                     user.get_join_date(),
-                     user.get_auth_id(),
-                     user_id]
-                    )
-        except Exception as e:
-            raise DatabaseException(
-                    f'Error coud not modify the user {user_id} to {user}: {e}.'
-                    )
-
-    def get_all_users(self: Self) -> list[User]:
-        """ Returns all the users of the database.
-        ---
-        Parameters:
-            self (Self): Current instance.
-        ---
-        Returns:
-            (list[User]): List of all the users of the database.
-        ---
-        Raises:
-            (DatabaseException): If the query fails.
-        ---
-        Example:
-        ```python
-        service_bdd = Service_bdd()
-        all_users = service_bdd.get_all_users()
-        ```
-        """
-        query = 'SELECT * FROM users'
-        try:
-            lines = self.fetch_query(query)
-        except Exception as e:
-            raise DatabaseException(f'Could not get all the users: {e}.')
-        return [User(*line[1:], id = line[0]) for line in lines]
-
+        assert(my_user == service_bdd.get_user_email('e@mail.com'))
+        """ TODO
+    get_all_users() -> list[user].
+    """
