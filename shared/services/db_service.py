@@ -692,7 +692,7 @@ class Service_bdd:
         Example:
         ```python
         service_bdd = Service_bdd()
-        my_media = bdd_service.get_media('media_id')
+        my_media = service_bdd.get_media('media_id')
         ```
         """
         query = 'SELECT * FROM medias WHERE id = %s'
@@ -991,3 +991,80 @@ class Service_bdd:
             raise DatabaseException(f'Could not get all the users: {e}.')
         return [User(*line[1:], id = line[0]) for line in lines]
 
+    def get_users_in_group(self: Self, group_id: str) -> list[User]:
+        """ Returns the users of a group.
+        ---
+        Parameters:
+            self (Self): Current instance.
+            group_id (str): Id of the group to get the users of.
+        ---
+        Returns:
+            (list[User]): List of the users of the given group.
+        ---
+        Raises:
+            (DatabaseException): If the query fails.
+        ---
+        Example:
+        ```python
+        service_bdd = Service_bdd()
+        users = service_bdd.get_users_in_group('group_id')
+        ```
+        """
+        query = ('SELECT users.* FROM users '
+                 'JOIN useringroup ON user.id = useringroup.user_id '
+                 'WHERE useringroup.group_id = %s')
+        try:
+            lines = self.fetch_query(query, [group_id])
+        except Exception as e:
+            raise DatabaseException(
+                    f'Could not get all the users of group {group_id}: {e}.'
+                    )
+        return [User(*line[1:], id = line[0]) for line in lines]
+
+    def init_user_iterator(self: Self) -> Iterator[User]:
+        """ Returns an iterator over all the users.
+        ---
+        Parameters:
+            self (Self): Current instance.
+        ---
+        Returns:
+            (Iterator[User]): Iterator over all the users of the database.
+        ---
+        Raises:
+            (DatabaseException): If the query fails.
+        ---
+        Example:
+        ```python
+        service_bdd = Service_bdd()
+        for user in service_bdd.init_user_iterator():
+            print(user)
+        ```
+        """
+        return iter(self.get_all_users())
+
+    def get_next_user(
+            self: Self,
+            user_iterator: Iterator[User]
+            ) -> Optional[User]:
+        """ Returns the next user of the given iterator.
+        ---
+        Parameters:
+            self (Self): Current instance.
+            user_iterator (Iterator[User]): Iterator over users in the database.
+        ---
+        Returns:
+            (Optional[User]): Next user of the iterator or None if no more
+            users.
+        ---
+        Example:
+        ```python
+        service_bdd = Service_bdd()
+        iterator = service_bdd.init_user_iterator()
+        while (user:= self.get_next_user(iterator)) != None:
+            print(user)
+        ```
+        """
+        try:
+            return next(user_iterator)
+        except StopIteration:
+            return None
