@@ -17,6 +17,62 @@ class Service_bdd:
         cursor (psycopg2.extensions.cursor): Cursor in the database.
     ---
     Methods:
+        - __init__(Self): Creates a new database access service.
+        - fetch_query(Self,str,list[Any]=None) -> list[tuple[Any]]: Executes
+          the given query on the database to fetch data.
+        - change_query(Self,str,list[Any]=None) -> list[tuple[Any]]: Executes
+          the given query on the database to change data.
+        - close_connection(self): Close the connection to the database.
+        - __del__(Self): Deletes the current instance.
+        - iter_message_first(Self,str) -> Message: Returns the first message to
+          load for a given group.
+        - oldest_message(Self,str) -> Message: Returns the oldest message to
+          load for a given group.
+        - iter_message_next(Self,Message) -> Message: Returns the message which
+          should be loaded after the given message.
+        - rename_group(Self,str,str): Rename the given group.
+        - remove_user_from_group(Self,str,str): Remove the given user from the
+          given group.
+        - add_user_to_group(Self,str,str): Adds the given user to the given
+          group.
+        - create_group(Self,Group) -> str: Creates the given group in the
+          database.
+        - get_group(Self,str) -> Group: Returns the group with the given id.
+        - get_groups_user(Self,str) -> list[Group]: Returns all the group of a
+          given user.
+        - create_message(Self,Message) -> str: Create a new message in the
+          database.
+        - create_message_with_medias(Self,Message,list[Media]) -> str: Creates
+          a message and its medias in the database.
+        - get_message_user_iterator(Self,str) -> Message_iterator: Returns an
+          iterator for the messages of a group.
+        - get_medias_message(Self,str) -> list[Media]: Returns the medias
+          attached to a given message.
+        - get_message(Self,str) -> Message:: Returns the message with the given
+          id.
+        - delete_message(Self,str): Deletes the message with the given id.
+        - get_media(Self,str) -> Media:: Returns the media with the given id.
+        - create_media(Self,Media,str) -> str: Creates a new media in the
+          database.
+        - get_media(Self,str) -> Media:: Returns the media with the given id.
+        - delete_media(Self,str): Deleted the given media from the database.
+        - create_user(Self,User) -> str:: Creates the given user in the
+          database.
+        - delete_user(Self,str): Delete the given user.
+        - get_user(Self,str) -> User:: Returns the user with the given id.
+        - get_user_auth(Self,str) -> User:: Returns the user with the given id
+          in the authentification database.
+        - get_user_email(Self,str) -> User:: Returns the user with the given
+          email.
+        - set_user(Self,str,User): Changes the given user.
+        - get_all_users(Self) -> list[User]: Returns all the users of the
+          database.
+        - get_users_in_group(Self,str) -> list[User]: Returns the users of a
+          group.
+        - init_user_iterator(Self) -> Iterator[User]: Returns an iterator over
+          all the users.
+        - get_next_user(Self,Iterator[User]) -> Optional[User]: Returns the
+          next user of the given iterator.
     """
 
     def __init__(self: Self):
@@ -40,13 +96,11 @@ class Service_bdd:
                     )
             self.cursor = self.connection.cursor()
         except Exception as e:
-            raise DatabaseException(f'Failed to instanciate the database service: {e}')
+            raise DatabaseException(
+                    f'Failed to instanciate the database service: {e}'
+                    )
 
-    def fetch_query(
-            self: Self,
-            query: str,
-            params: list[Any]=None
-            ) -> list[tuple[Any]]:
+    def fetch_query( self: Self, query: str, params: list[Any]=None) -> list[tuple[Any]]:
         """ Executes the given query on the database to fetch data.
         ---
         Parameters:
@@ -274,7 +328,7 @@ class Service_bdd:
     def remove_user_from_group(
             self: Self,
             user_id: str,
-            group_id: str,
+            group_id: str
             ):
         """ Remove the given user from the given group.
         ---
@@ -469,13 +523,16 @@ class Service_bdd:
             self: Self,
             message: Message,
             medias: list[Media]
-            ):
-        """Creates a message and its medias in the database.
+            ) -> str:
+        """ Creates a message and its medias in the database.
         ---
         Parameters:
             self (Self): Current instance.
             message (Message): Message to create.
             medias (list[Media]): List of medias attached to the message.
+        ---
+        Returns:
+            (str): Id of the message in the database.
         ---
         Raises:
             (DatabaseException): If the query fails.
@@ -505,7 +562,10 @@ class Service_bdd:
             self.create_media(media, message_id)
         return message_id
 
-    def get_message_user_iterator(self: Self, group_id: str) -> Message_iterator:
+    def get_message_user_iterator(
+            self: Self,
+            group_id: str
+            ) -> Message_iterator:
         """ Returns an iterator for the messages of a group.
         ---
         Parameters:
