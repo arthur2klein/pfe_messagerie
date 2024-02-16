@@ -1,0 +1,36 @@
+.menu-icon {
+  font-size: 1.5rem;
+  border: 1px solid var(--main-background);
+  border-radius: 50%;
+  padding: 0.2rem;
+  &:hover {
+    background-color: var(--accent-background);
+  }
+}
+
+.app-name {
+  line-height: 1.6rem;
+}
+
+.menu-icon-container {
+  display: flex;
+  margin: 0.5rem;
+  flex-direction: column;
+  color: var(--main-background);
+  align-items: center;
+
+  a {
+    color: var(--main-background);
+  }
+}
+
+@media (max-height: 800px), (max-width: 600px) {
+  .menu-text {
+    display: none;
+  }
+
+  .app-name {
+    font-size: 1.6rem;
+    margin: 0.2rem;;
+  }
+}

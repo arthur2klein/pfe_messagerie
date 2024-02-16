@@ -1,0 +1,49 @@
+:root {
+  --main-background: #000000;
+  --secondary-background: #384955;
+  --accent-background: #4B0082;
+  --main-text: #FFFFFF;
+  --accent-text: #88B0CD;
+  --secondary-text: #327EA7;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  color: var(--main-text);
+  background: var(--main-background);
+}
+
+.App {
+  text-align: center;
+  display: grid;
+  grid-template: 
+    "tbar" max(2rem, 10%)
+    "cont" 1fr;
+  width: 100%;
+  height: 100%;
+}
+
+.app-bar {
+  background-color: var(--secondary-background);
+  border-bottom: 0.1rem solid var(--secondary-text);
+  grid-area: tbar;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.app-name {
+  color: var(--accent-text);
+  margin: 1rem;
+}
+
+.app-content {
+  background-color: var(--main-background);
+  grid-area: cont;
+}
+
+.container {
+  height: 100%;
+  width: 100%;
+}
