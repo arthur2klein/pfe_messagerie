@@ -47,3 +47,18 @@ html, body, #root {
   height: 100%;
   width: 100%;
 }
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--secondary-background);
+  color: var(--main-text);
+  padding: 10px 15px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  opacity: 0.5;
+  transition: opacity 0.5s ease-in-out;
+}

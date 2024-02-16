@@ -16,7 +16,11 @@ const ViewMessagesPage: React.FC = () => {
 
   return (
     <div className="container">
-      <h1>This page will allow the user to select the discussion group and see the discussion.</h1>
+      <div className="select-group">
+      </div>
+      <div className="view-message">
+        <h1>This page will allow the user to select the discussion group and see the discussion.</h1>
+      </div>
     </div>
   );
 }
