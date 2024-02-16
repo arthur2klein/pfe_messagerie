@@ -2,6 +2,7 @@ import {useNavigate} from 'react-router-dom';
 import './ManagePage.css'
 import UserService from '../services/UserService';
 import {useEffect} from 'react';
+import ManageGroupForm from '../components/ManageGroupForm';
 
 const ManagePage: React.FC = () => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const ManagePage: React.FC = () => {
 
   return (
     <div className="container">
-      <h1>This page will allow the user to create and modify its groups.</h1>
+      <ManageGroupForm />
     </div>
   );
 }

@@ -8,7 +8,7 @@ interface User {
 }
 
 class UserService {
-  
+
   private static testUser: User = {
     id: '1',
     name: 'doe',
@@ -71,6 +71,20 @@ class UserService {
     throw new Error("User not found");
   }
 
+  static receiveChange(formData: {
+    name: string;
+    first_name: string;
+    password: string;
+    validate_password: string;
+  }) {
+    const formValidation = this.validateChange(formData)
+    if (formValidation != "") {
+      throw new Error(formValidation);
+    }
+    this.currentUser!.name = formData.name;
+    this.currentUser!.first_name = formData.first_name;
+  }
+
   static validateInscriptionForm(formData: {
     name: string;
     first_name: string;
@@ -99,6 +113,26 @@ class UserService {
     return '';
   }
 
+  static validateChange(formData: {
+    name: string;
+    first_name: string;
+    password: string;
+    validate_password: string;
+  }): string {
+    if (formData.password != formData.validate_password)
+      return 'Passwords don\'t match.';
+    if (formData.first_name == "") {
+      return 'Empty first name forbidden';
+    }
+    if (formData.name == "") {
+      return 'Empty name forbidden';
+    }
+    if (this.isWeakPassword(formData.password)) {
+      return 'Password too weak';
+    }
+    return '';
+  }
+
   static isWeakPassword = (password: string): boolean => {
     const hasMinimumLength = password.length >= 6;
     const hasUppercase = /[A-Z]/.test(password);
@@ -117,6 +151,19 @@ class UserService {
       return this.testUser;
     }
   }
+
+  static disconnect() {
+    this.currentUser = undefined;
+  }
+
+  static receiveGroupChange(old_name: string, new_name: string) {
+    throw new Error('Method not implemented.');
+  }
+
+  static receiveGroupCreation(new_name: string) {
+    throw new Error('Method not implemented.');
+  }
+  
 }
 
 export default UserService;

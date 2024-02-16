@@ -1,24 +1,32 @@
 import {useEffect} from 'react';
-import './ManagePage.css'
+import './UserPage.css'
 import UserService from '../services/UserService';
 import {useNavigate} from 'react-router-dom';
+import ChangeForm from '../components/ChangeForm';
 
 const UserPage: React.FC = () => {
 
   const navigate = useNavigate();
+  const isConnected = UserService.isConnected();
 
   useEffect(() => {
     const isConnected = UserService.isConnected();
     if (!isConnected) {
-      navigate('/connection')
+      navigate('/connection');
     }
   }, [navigate]);
 
-  return (
+  function handleDisconnect(): void {
+    UserService.disconnect();
+    navigate('/');
+  }
+
+  return isConnected ? (
     <div className="container">
-      <h1>This page will allow the user to modify its account and disconnect.</h1>
+      <ChangeForm />
+      <button onClick={handleDisconnect} className="disconnect">Disconnect</button>
     </div>
-  );
+    ): null;
 }
 
 export default UserPage;
