@@ -1,0 +1,58 @@
+.message {
+  display: grid;
+  border-radius: 1em;
+  padding: 1em;
+
+  &.sender {
+    grid-template:
+      "dat rec"
+      "con con";
+    grid-template-rows: fit-content 1fr;
+    grid-template-columns: 1fr 1fr;
+    background-color: var(--accent-background);
+    margin-left: max(3em, 20%);
+    align-self: end;
+
+    .message-sender {
+      display: none;
+    }
+  }
+
+  &.receiver {
+    grid-template:
+      "sen dat"
+      "con con";
+    grid-template-rows: fit-content 1fr; 
+    grid-template-columns: 1fr 1fr;
+    background-color: var(--secondary-background);
+    margin-right: max(3em, 20%);
+    align-self: start;
+
+    .message-receiver {
+      display: none;
+    }
+  }
+}
+
+.message-content {
+  margin: 0.5rem;
+  margin-top: 1rem;
+  grid-area: con;
+  color: var(--main-text);
+  text-align: left;
+}
+
+.message-sender {
+  grid-area: sen;
+  color: var(--accent-text);
+}
+
+.message-receiver {
+  grid-area: rec;
+  color: var(--accent-text);
+}
+
+.message-date {
+  grid-area: dat;
+  color: var(--secondary-text);
+}

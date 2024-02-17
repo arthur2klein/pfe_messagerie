@@ -19,7 +19,7 @@ html, body, #root {
   display: grid;
   grid-template: 
     "tbar" max(2rem, 10%)
-    "cont" 1fr;
+    "cont" auto;
   width: 100%;
   height: 100%;
 }
@@ -39,8 +39,8 @@ html, body, #root {
 }
 
 .app-content {
-  background-color: var(--main-background);
   grid-area: cont;
+  background: linear-gradient(165deg, var(--main-background) 40%, var(--secondary-background));
 }
 
 .container {

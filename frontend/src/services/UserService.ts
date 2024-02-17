@@ -1,13 +1,25 @@
-interface User {
-  id: string,
-  name: string,
-  first_name: string,
-  email: string,
-  join_date: number,
-  auth_id: string
-}
+import User from "../models/User";
+import Group from "../models/Group";
+import Message from "../models/Message";
 
 class UserService {
+  static receiveGroupAdd(name: string) {
+    throw new Error('Method not implemented.');
+  }
+  static receiveGroupGrow(group_id: string, user_email: string) {
+    throw new Error('Method not implemented.');
+  }
+
+  static getUserFromId(id: string): User | null {
+    if (id == '1') {
+      return this.testUser;
+    }
+    return null;
+  }
+
+  static getGroupFromId(id: string): Group | null {
+    return this.testGroups[id];
+  }
 
   private static testUser: User = {
     id: '1',
@@ -16,6 +28,63 @@ class UserService {
     email: 'e@mail.com',
     join_date: 1000,
     auth_id: '0',
+  }
+  private static testGroups: Record<string, Group> = {
+      '1':  {id: '1',  name: 'groupe1',  },
+      '2':  {id: '2',  name: 'groupe2',  },
+      '3':  {id: '3',  name: 'groupe3',  },
+      '4':  {id: '4',  name: 'groupe4',  },
+      '5':  {id: '5',  name: 'groupe5',  },
+      '6':  {id: '6',  name: 'groupe6',  },
+      '7':  {id: '7',  name: 'groupe7',  },
+      '8':  {id: '8',  name: 'groupe8',  },
+      '9':  {id: '9',  name: 'groupe9',  },
+      '10': {id: '10', name: 'groupe10', },
+  };
+
+  static getGroups(): Record<string, Group> {
+    return this.testGroups;
+  }
+
+  static getAllMessages(groupId: string): Message[] {
+    if (groupId != '1') return [];
+    return [
+      {
+        id: '0',
+        content: 'test',
+        sender_id: '1',
+        receiver_group_id: '1',
+        date: 0,
+      },
+      {
+        id: '1',
+        content: 'This is a test message',
+        sender_id: '2',
+        receiver_group_id: '1',
+        date: 1,
+      },
+      {
+        id: '2',
+        content: 'This is an other one',
+        sender_id: '1',
+        receiver_group_id: '1',
+        date: 2,
+      },
+      {
+        id: '3',
+        content: 'tE5!',
+        sender_id: '1',
+        receiver_group_id: '1',
+        date: 3,
+      },
+      {
+        id: '4',
+        content: 'abcdefg',
+        sender_id: '1',
+        receiver_group_id: '1',
+        date: 4,
+      },
+    ];
   }
 
   private static currentUser: User | undefined = this.testUser;
@@ -156,7 +225,7 @@ class UserService {
     this.currentUser = undefined;
   }
 
-  static receiveGroupChange(old_name: string, new_name: string) {
+  static receiveGroupChange(id: string, new_name: string) {
     throw new Error('Method not implemented.');
   }
 
