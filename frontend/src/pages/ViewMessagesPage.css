@@ -24,7 +24,9 @@
 
 .create-message {
   position: fixed;
-  bottom: 0;
-  width:100vw;
+  bottom: 0.3rem;
+  width:80vw;
   height: fit-content;
+  margin-right: 10vw;
+  margin-left: 10vw;
 }

@@ -41,6 +41,7 @@ const ChangeForm: React.FC = () => {
           <input
             type="text"
             name="name"
+            placeholder={formData.name}
             value={formData.name}
             onChange={handleChange}
           />
@@ -50,6 +51,7 @@ const ChangeForm: React.FC = () => {
           <input
             type="text"
             name="first_name"
+            placeholder={formData.first_name}
             value={formData.first_name}
             onChange={handleChange}
           />
@@ -59,6 +61,7 @@ const ChangeForm: React.FC = () => {
           <input
             type="password"
             name="password"
+            placeholder="New password"
             value={formData.password}
             onChange={handleChange}
           />
@@ -68,6 +71,7 @@ const ChangeForm: React.FC = () => {
           <input
             type="password"
             name="validate_password"
+            placeholder="Confirm new password"
             value={formData.validate_password}
             onChange={handleChange}
           />

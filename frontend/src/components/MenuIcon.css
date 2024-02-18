@@ -3,6 +3,7 @@
   border: 1px solid var(--main-background);
   border-radius: 50%;
   padding: 0.2rem;
+  transition: background-color 0.3s ease;
   &:hover {
     background-color: var(--accent-background);
   }

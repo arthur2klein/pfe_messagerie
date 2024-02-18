@@ -49,6 +49,7 @@ const ManageGroupForm: React.FC<ManageGroupFormProps> = ({group}) => {
           <input
             type="text"
             name="new_name"
+            placeholder={group.name}
             value={formData.new_name}
             onChange={handleChange}
           />
@@ -58,6 +59,7 @@ const ManageGroupForm: React.FC<ManageGroupFormProps> = ({group}) => {
           <input
             type="email"
             name="email"
+            placeholder="User to add"
             value={formData.user_email}
             onChange={handleChange}
           />

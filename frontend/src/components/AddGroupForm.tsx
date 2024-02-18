@@ -39,6 +39,7 @@ const AddGroupForm: React.FC = () => {
           <input
             type="text"
             name="new_name"
+            placeholder="Name of the group"
             value={formData.name}
             onChange={handleChange}
           />

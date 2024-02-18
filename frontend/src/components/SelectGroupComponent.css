@@ -8,6 +8,10 @@
   align-items: center;
   width: 100vw;
   opacity: 0.6;
+  transition: opacity 0.3s ease;
+  &:hover {
+    opacity: 1;
+  }
 
   select {
     margin-right: 1.6rem;

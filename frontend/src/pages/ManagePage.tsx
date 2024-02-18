@@ -27,8 +27,15 @@ const ManagePage: React.FC = () => {
 
   return (
     <div className="container manage-page">
-      <SelectGroupComponent groups={groups} selectedGroup={selectedGroup} onGroupGhange={handleGroupChange} />
-      <ManageGroupForm group={selectedGroup} />
+      <SelectGroupComponent
+        groups={groups}
+        selectedGroup={selectedGroup}
+        onGroupGhange={handleGroupChange}
+      />
+      {selectedGroup.id?
+        <ManageGroupForm group={selectedGroup} />
+        :<h1>Select a group to edit it</h1>
+      }
       <AddGroupForm />
     </div>
   );

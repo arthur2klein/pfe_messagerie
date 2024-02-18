@@ -3,6 +3,9 @@ import Group from "../models/Group";
 import Message from "../models/Message";
 
 class UserService {
+  static sendMessage(messageContent: string) {
+    throw new Error('Method not implemented.');
+  }
   static receiveGroupAdd(name: string) {
     throw new Error('Method not implemented.');
   }

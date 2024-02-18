@@ -6,6 +6,7 @@ import Group from '../models/Group';
 import Message from '../models/Message';
 import MessageComponent from '../components/MessageComponent';
 import SelectGroupComponent from '../components/SelectGroupComponent';
+import CreateMessageComponent from '../components/CreateMessageComponent';
 
 const ViewMessagesPage: React.FC = () => {
 
@@ -36,6 +37,10 @@ const ViewMessagesPage: React.FC = () => {
     setMessages(UserService.getAllMessages(selectedGroupId));
   };
 
+  const receiveMessage = (messageContent: string): void => {
+    UserService.sendMessage(messageContent);
+  };
+
   return (
     <div className="container messages-page">
       <SelectGroupComponent groups={groups} selectedGroup={selectedGroup} onGroupGhange={handleGroupChange} />
@@ -47,9 +52,7 @@ const ViewMessagesPage: React.FC = () => {
           ))
         }
         {selectedGroup.id != ""?
-          <div className="create-message">
-            <h1>This will allow users to add messages</h1>
-          </div>
+          <CreateMessageComponent onSendMessage={receiveMessage} />
           :null
         }
       </div>

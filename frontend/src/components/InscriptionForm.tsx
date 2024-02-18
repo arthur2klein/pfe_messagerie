@@ -42,6 +42,7 @@ const InscriptionForm: React.FC = () => {
           <input
             type="text"
             name="name"
+            placeholder="name"
             value={formData.name}
             onChange={handleChange}
           />
@@ -51,6 +52,7 @@ const InscriptionForm: React.FC = () => {
           <input
             type="text"
             name="first_name"
+            placeholder="first name"
             value={formData.first_name}
             onChange={handleChange}
           />
@@ -60,6 +62,7 @@ const InscriptionForm: React.FC = () => {
           <input
             type="email"
             name="email"
+            placeholder="email"
             value={formData.email}
             onChange={handleChange}
           />
@@ -69,6 +72,7 @@ const InscriptionForm: React.FC = () => {
           <input
             type="password"
             name="password"
+            placeholder="password"
             value={formData.password}
             onChange={handleChange}
           />
@@ -78,6 +82,7 @@ const InscriptionForm: React.FC = () => {
           <input
             type="password"
             name="validate_password"
+            placeholder="password confirmation"
             value={formData.validate_password}
             onChange={handleChange}
           />

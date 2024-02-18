@@ -39,6 +39,7 @@ const ConnectionForm: React.FC = () => {
           <input
             type="email"
             name="email"
+            placeholder="Email of your accound"
             value={formData.email}
             onChange={handleChange}
           />
@@ -48,6 +49,7 @@ const ConnectionForm: React.FC = () => {
           <input
             type="password"
             name="password"
+            placeholder="Password of your account"
             value={formData.password}
             onChange={handleChange}
           />
