@@ -1,0 +1,3 @@
+[submodule "pfe_messagerie"]
+	path = pfe_messagerie
+	url = https://github.com/arthur2klein/pfe_messagerie.git
