@@ -338,9 +338,8 @@ def get_media(media_id: int):
     # Implement logic to retrieve media by ID
     return {"media": "Media retrieved successfully"}
 
-
 # Run the FastAPI application
-if __name__ == "__main__":
-    import uvicorn
+# if __name__ == "__main__":
+#    import uvicorn
 
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+#    uvicorn.run(app, host="127.0.0.1", port=8000)
