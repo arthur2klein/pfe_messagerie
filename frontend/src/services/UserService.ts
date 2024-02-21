@@ -3,16 +3,6 @@ import Group from "../models/Group";
 import Message from "../models/Message";
 
 class UserService {
-  static sendMessage(messageContent: string) {
-    throw new Error('Method not implemented.');
-  }
-  static receiveGroupAdd(name: string) {
-    throw new Error('Method not implemented.');
-  }
-  static receiveGroupGrow(group_id: string, user_email: string) {
-    throw new Error('Method not implemented.');
-  }
-
   static getUserFromId(id: string): User | null {
     if (id == '1') {
       return this.testUser;
@@ -139,8 +129,9 @@ class UserService {
       formData.password == "password"
     ) {
       this.currentUser = this.testUser;
+    } else {
+      throw new Error("User not found");
     }
-    throw new Error("User not found");
   }
 
   static receiveChange(formData: {
@@ -235,7 +226,19 @@ class UserService {
   static receiveGroupCreation(new_name: string) {
     throw new Error('Method not implemented.');
   }
-  
+
+  static sendMessage(messageContent: string) {
+    throw new Error('Method not implemented.');
+  }
+
+  static receiveGroupAdd(name: string) {
+    throw new Error('Method not implemented.');
+  }
+
+  static receiveGroupGrow(group_id: string, user_email: string) {
+    throw new Error('Method not implemented.');
+  }
+ 
 }
 
 export default UserService;
