@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: pfe-postgres-container
+    environment:
+      POSTGRES_DB: pfe_database
+      POSTGRES_USER: my_user
+      POSTGRES_PASSWORD: my_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./config/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./config/database/init-log-directory.sh:/docker-entrypoint-initdb.d/init-log-directory.sh
+      - ./config/database/postgres.conf:/etc/postgresql/postgresql.conf
+      - ./logs/:/var/log/postgresql/
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  postgres_data:
+
