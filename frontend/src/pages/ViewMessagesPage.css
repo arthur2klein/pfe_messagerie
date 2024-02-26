@@ -1,0 +1,32 @@
+.container.messages-page {
+  min-height: 100%;;
+  display: grid;
+  grid-template: 
+    "sel" 3em
+    "mes" 1fr;
+}
+
+.select-group {
+  grid-area: sel;
+}
+
+.view-message {
+  grid-area: mes;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.message {
+  margin: 2rem;
+  max-width: 60rem;
+}
+
+.create-message {
+  position: fixed;
+  bottom: 0.3rem;
+  width:80vw;
+  height: fit-content;
+  margin-right: 10vw;
+  margin-left: 10vw;
+}

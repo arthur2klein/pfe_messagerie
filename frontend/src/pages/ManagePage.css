@@ -1,0 +1,28 @@
+.container.manage-page {
+  display: grid;
+  grid-template:
+    "sel sel" 3rem
+    "man add" auto;
+  & > * {
+    margin: auto;
+  }
+
+  @media (max-width: 800px) {
+  grid-template:
+    "sel" 2rem
+    "man" auto
+    "add" auto;
+  }
+}
+
+.select-group {
+  grid-area: sel;
+}
+
+.manage-group {
+  grid-area: man;
+}
+
+.add-group {
+  grid-area: add;
+}

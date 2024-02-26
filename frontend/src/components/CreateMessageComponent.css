@@ -1,0 +1,35 @@
+.create-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;;
+}
+
+.send-message {
+  font-size: 1.2rem;
+  padding: 0.3rem;
+  border: 1px solid var(--main-background);
+  border-radius: 0.5rem;
+  opacity: 0.6;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.message-input {
+  background-color: var(--main-background);
+  color: var(--main-text);
+  border: 1px solid var(--main-text);
+  border-radius: 0.5rem;
+  padding: 0.3rem;
+  opacity: 0.3;
+  flex: 1;
+  transition: opacity 0.3s ease;
+  max-height: min(10rem, 50%);
+  font: inherit;
+  &:focus {
+    opacity: 1;
+  }
+
+}
