@@ -27,10 +27,10 @@ const ManageGroupForm: React.FC<ManageGroupFormProps> = ({group}) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      if (formData.new_name != group.name && formData.new_name != "") {
+      if (formData.new_name !== group.name && formData.new_name !== "") {
         UserService.receiveGroupChange(group.id, formData.new_name);
       }    
-      if (formData.user_email != "") {
+      if (formData.user_email !== "") {
         UserService.receiveGroupGrow(group.id, formData.user_email);
       }    
     } catch (error) {

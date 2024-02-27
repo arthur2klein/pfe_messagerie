@@ -1,42 +1,55 @@
-version: "3"
+version: '3.8'
 
 services:
-
-   #### Service Postgres Database
   postgres:
-    image: postgres:13
-    container_name: postgres
-    ports:
-      - "${POSTGRES_PORT}:5432"
+    image: postgres:latest
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB_NAME}
-    networks:
-      - pfe-net
+      POSTGRES_DB: pfe_database
+      POSTGRES_USER: my_user
+      POSTGRES_PASSWORD: my_password
+    ports:
+      - "5433:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    restart: on-failure
+      - ./config/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      # - ./config/database/init-log-directory.sh:/docker-entrypoint-initdb.d/init-log-directory.sh
+      # - ./config/database/postgres.conf:/etc/postgresql/postgresql.conf
+      # - ./logs/:/var/log/postgresql/
+    networks:
+      - backend
 
-  ##### Service Fastapi
-  fastapi:
+  api:
     build:
-      context: ./
-      dockerfile: Dockerfile
-    container_name: fastapi
+      context: .
+      dockerfile: docker/api.dockerfile
+    environment:
+      PG_USER: admin_user
+      PG_PASSWORD: admin_password
+      PG_HOST: postgres
+      PG_DATABASE: postgres
     depends_on:
       - postgres
     ports:
-      - "${FASTAPI_PORT}:8000"
+      - "8000:8000"
     networks:
-      - pfe-net
-    volumes:
-      - ./app:/app
+      - backend
     restart: on-failure
 
+  front:
+    build:
+      context: .
+      dockerfile: docker/frontend.dockerfile
+    container_name: front
+    networks:
+      - frontend
+    ports:
+      - "3000:3000"
+        
+
 networks:
-  pfe-net:
+  frontend:
+    driver: bridge
+  backend:
     driver: bridge
 
-volumes:
-  postgres_data:
+# volumes:
+#   postgres_data:

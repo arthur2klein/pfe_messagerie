@@ -4,7 +4,7 @@ import Message from "../models/Message";
 
 class UserService {
   static getUserFromId(id: string): User | null {
-    if (id == '1') {
+    if (id === '1') {
       return this.testUser;
     }
     return null;
@@ -40,7 +40,7 @@ class UserService {
   }
 
   static getAllMessages(groupId: string): Message[] {
-    if (groupId != '1') return [];
+    if (groupId !== '1') return [];
     return [
       {
         id: '0',
@@ -108,7 +108,7 @@ class UserService {
     validate_password: string;
   }) {
     const formValidation = this.validateInscriptionForm(formData)
-    if (formValidation != "") {
+    if (formValidation !== "") {
       throw new Error(formValidation);
     }
     else {
@@ -125,8 +125,8 @@ class UserService {
     password: string;
   }) {
     if (
-      formData.email == this.testUser.email &&
-      formData.password == "password"
+      formData.email === this.testUser.email &&
+      formData.password === "password"
     ) {
       this.currentUser = this.testUser;
     } else {
@@ -141,7 +141,7 @@ class UserService {
     validate_password: string;
   }) {
     const formValidation = this.validateChange(formData)
-    if (formValidation != "") {
+    if (formValidation !== "") {
       throw new Error(formValidation);
     }
     this.currentUser!.name = formData.name;
@@ -155,16 +155,16 @@ class UserService {
     password: string;
     validate_password: string;
   }): string {
-    if (formData.password != formData.validate_password)
+    if (formData.password !== formData.validate_password)
       return 'Passwords don\'t match.';
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       return 'Invalid email format.';
     }
-    if (formData.first_name == "") {
+    if (formData.first_name === "") {
       return 'Empty first name forbidden';
     }
-    if (formData.name == "") {
+    if (formData.name === "") {
       return 'Empty name forbidden';
     }
     if (this.isWeakPassword(formData.password)) {
@@ -182,12 +182,12 @@ class UserService {
     password: string;
     validate_password: string;
   }): string {
-    if (formData.password != formData.validate_password)
+    if (formData.password !== formData.validate_password)
       return 'Passwords don\'t match.';
-    if (formData.first_name == "") {
+    if (formData.first_name === "") {
       return 'Empty first name forbidden';
     }
-    if (formData.name == "") {
+    if (formData.name === "") {
       return 'Empty name forbidden';
     }
     if (this.isWeakPassword(formData.password)) {
@@ -210,7 +210,7 @@ class UserService {
   };
 
   static getUserEmail(email: string) {
-    if (email == this.testUser.email) {
+    if (email === this.testUser.email) {
       return this.testUser;
     }
   }

@@ -29,7 +29,7 @@ const ViewMessagesPage: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
 
   const handleGroupChange = (selectedGroupId: string) => {
-    if (selectedGroupId != "") {
+    if (selectedGroupId !== "") {
       setSelectedGroup(groups[selectedGroupId]);
     } else {
       setSelectedGroup({id: '', name: ''});
@@ -45,13 +45,13 @@ const ViewMessagesPage: React.FC = () => {
     <div className="container messages-page">
       <SelectGroupComponent groups={groups} selectedGroup={selectedGroup} onGroupGhange={handleGroupChange} />
       <div className="view-message">
-        {selectedGroup.id == ""?
+        {selectedGroup.id === ""?
           <h1>Please chose a group to display the messages</h1>
           :messages.map(m => (
             <MessageComponent message={m} />
           ))
         }
-        {selectedGroup.id != ""?
+        {selectedGroup.id !== ""?
           <CreateMessageComponent onSendMessage={receiveMessage} />
           :null
         }

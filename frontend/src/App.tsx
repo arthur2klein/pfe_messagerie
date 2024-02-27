@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import './App.css';
 import {AppMenu} from './components/AppMenu';
 import ViewMessagesPage from "./pages/ViewMessagesPage";

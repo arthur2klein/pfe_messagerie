@@ -1,7 +1,6 @@
 import {useState} from 'react';
 import './AddGroupForm.css'
 import UserService from '../services/UserService';
-import Group from '../models/Group';
 
 const AddGroupForm: React.FC = () => {
 

@@ -1009,16 +1009,13 @@ class Service_bdd:
         """
         query = ('UPDATE users '
                  'SET name = %s, first_name = %s, '
-                 'email = %s, join_date = %s, '
-                 'auth_id = %s WHERE id = %s')
+                 'email = %s WHERE id = %s')
         try:
             self.change_query(
                     query,
                     [user.get_name(),
                      user.get_first_name(),
                      user.get_email(),
-                     user.get_join_date(),
-                     user.get_auth_id(),
                      user_id]
                     )
         except Exception as e:

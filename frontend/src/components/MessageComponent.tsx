@@ -10,7 +10,7 @@ const MessageComponent: React.FC<MessageComponentProps> = (
   props
 ) => {
   const sender = UserService.getUserFromId(props.message.sender_id)
-  const isSender = UserService.getUser()?.id == sender?.id;
+  const isSender = UserService.getUser()?.id === sender?.id;
   const receiver = UserService.getGroupFromId(props.message.receiver_group_id)
   const date = new Date(props.message.date * 1000);
   return (

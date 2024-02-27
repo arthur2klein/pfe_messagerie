@@ -1,7 +1,7 @@
-CREATE ROLE minimal_user;
-GRANT USAGE ON SCHEMA public TO regular_user;
+CREATE ROLE minimal_user WITH LOGIN PASSWORD 'minimal_password';
+GRANT USAGE ON SCHEMA public TO minimal_user;
 
-CREATE ROLE admin_user;
+CREATE ROLE admin_user WITH LOGIN PASSWORD 'admin_password';
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO admin_user;
 
 CREATE TABLE IF NOT EXISTS "User" (
@@ -24,13 +24,6 @@ CREATE TABLE IF NOT EXISTS "UserInGroup" (
     group_id INT REFERENCES "Group" (id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS "Media" (
-    id SERIAL PRIMARY KEY,
-    type_ VARCHAR(50) NOT NULL,
-    link VARCHAR(255) NOT NULL,
-    message_id INT REFERENCES "Message" (id) ON DELETE CASCADE
-);
-
 CREATE TABLE IF NOT EXISTS "Message" (
     id SERIAL PRIMARY KEY,
     content TEXT NOT NULL,
@@ -39,3 +32,9 @@ CREATE TABLE IF NOT EXISTS "Message" (
     date_ TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS "Media" (
+    id SERIAL PRIMARY KEY,
+    type_ VARCHAR(50) NOT NULL,
+    link VARCHAR(255) NOT NULL,
+    message_id INT REFERENCES "Message" (id) ON DELETE CASCADE
+);
