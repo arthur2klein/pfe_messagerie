@@ -24,6 +24,9 @@ class Service_bdd:
           the given query on the database to change data.
         - close_connection(self): Close the connection to the database.
         - __del__(Self): Deletes the current instance.
+        - get_all_messages_group(Self,str) ->
+          list[Message]: Returns every messages of the
+          given group.
         - iter_message_first(Self,str) -> Message: Returns the first message to
           load for a given group.
         - oldest_message(Self,str) -> Message: Returns the oldest message to
@@ -193,6 +196,39 @@ class Service_bdd:
         ```
         """
         self.close_connection()
+
+    def get_all_messages_group(self: Self, group_id: str) -> list[Message]:
+        """ Returns every messages of the given group.
+        ---
+        Parameters:
+            self (Self): Current instance.
+            group_id (str): Id of the group to get the messages of.
+        ---
+        Returns:
+            (list[Message]): List of all the messages of the given group.
+        ---
+        Raises:
+            (DatabaseException): If the query fails.
+        ---
+        Example:
+        ```python
+        service_bdd = Service_bdd()
+        message = service_bdd.get_all_messages_group('group_id')
+        ```
+        """
+        try:
+            query_result = self.fetch_query(
+                    "SELECT * FROM message "
+                    "WHERE receiver_group_id = %s "
+                    "ORDER BY date ASC",
+                    [group_id]
+                    )
+        except Exception as e:
+            raise DatabaseException(
+                    f'Could not execute the query to get all the messages for '
+                    f'{group_id=}: {e}'
+                    )
+        return [Message(*res[1:], id = res[0]) for res in query_result]
 
     def iter_message_first(self: Self, group_id: str) -> Message:
         """ Returns the first message to load for a given group.

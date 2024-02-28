@@ -1,4 +1,3 @@
-# main.py
 import logging
 import os
 from datetime import datetime, timedelta
@@ -17,6 +16,7 @@ from shared.models.user import User
 from shared.models.group import Group
 from shared.models.message import Message
 from shared.models.media import Media
+from shared.exceptions.database_exception import DatabaseException
 
 # FastAPI instance
 app = FastAPI()
@@ -34,14 +34,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 ALGORITHM = os.getenv('ALGORITHM')
 ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES')
 
-users = {}
-groups = {}
-messages = []
-media_items = []
-
-# WebSocket connections (replace with your actual storage)
 websocket_connections = {}
-
 
 # Function to create JWT tokens
 def create_access_token(data: dict):
@@ -55,9 +48,18 @@ def create_access_token(data: dict):
 # OAuth2PasswordBearer for token authentication
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+def manage_errors(function, *args, **kwargs):
+    def inner(*args, **kwargs):
+        try:
+            result = function(*args, **kwargs)
+        except DatabaseException as e:
+            result = {"error": e.message}
+        return result
+    return inner
 
 # API Route for login
 @app.post("/token")
+@manage_errors
 async def login_for_access_token(form_data: OAuth2PasswordBearer = Depends()):
     # Validate user credentials (this is a simplified example)
     # In a real-world scenario, you would verify the credentials against a database
@@ -86,11 +88,13 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 
 # API Route for protected data
 @app.get("/protected-data")
+@manage_errors
 async def get_protected_data(current_user: str = Depends(get_current_user)):
     return {"message": f"Hello, {current_user}, here is your protected data."}
 
 
 @app.post("/message/socket/init")
+@manage_errors
 def init_message_socket():
     logging.info("Initialisation du socket de message.")
     return bdd_service.init_message_socket()
@@ -98,11 +102,12 @@ def init_message_socket():
 
 # WebSocket path operation for message handling
 @app.websocket("/ws/message/{user_id}")
-async def message_ws(websocket: WebSocket, user_id: int):
+@manage_errors
+async def message_ws(websocket: WebSocket, user_id: str):
     await websocket.accept()
 
     # Store the WebSocket connection for later use
-    websocket_connections[user_id] = websocket
+    websocket_connections{user_id} = websocket
 
     try:
         while True:
@@ -112,7 +117,7 @@ async def message_ws(websocket: WebSocket, user_id: int):
 
     except WebSocketDisconnect:
         # Handle disconnect
-        del websocket_connections[user_id]
+        del websocket_connections{user_id}
 
 
 # RESTful API routes
@@ -121,6 +126,7 @@ async def message_ws(websocket: WebSocket, user_id: int):
 # Group Routes
 
 @app.post("/group/new")
+@manage_errors
 def create_group(name):
     logging.info("Création d'un groupe.")
     group = Group(name)
@@ -129,58 +135,78 @@ def create_group(name):
 
 
 @app.post("/group/rename/{group_id}")
-def rename_group(group_id: int, new_name: str):
+@manage_errors
+def rename_group(group_id: str, new_name: str):
     logging.info(f"Renommage du groupe ID: {group_id} en {new_name}.")
     bdd_service.rename_group(group_id, new_name)
     return {"new_name": new_name}
 
 
 @app.delete("/group/remove_user/{group_id}/{user_id}")
-def remove_group(group_id: int, user_id: int):
-    logging.info(f"Suppression de l'utilisateur ID: {user_id} du groupe ID: {group_id}.")
+@manage_errors
+def remove_group(group_id: str, user_id: str):
+    logging.info(
+            f"Suppression de l'utilisateur ID: "
+            f"{user_id} du groupe ID: {group_id}."
+            )
     bdd_service.remove_user_from_group(group_id, user_id)
     return {"user_removed": user_id, "group": group_id}
 
 
 @app.post("/group/add_user/{group_id}/{user_id}")
-def add_user_to_group(group_id: int, user_id: int):
-    logging.info(f"Ajout de l'utilisateur ID: {user_id} au groupe ID: {group_id}.")
+@manage_errors
+def add_user_to_group(group_id: str, user_id: str):
+    logging.info(
+            f"Ajout de l'utilisateur ID: "
+            f"{user_id} au groupe ID: {group_id}."
+            )
     bdd_service.add_user_to_group(user_id, group_id)
     return {"user_added": user_id, "group": group_id}
 
 
 @app.get("/group/{group_id}")
-def get_group(group_id: int):
+@manage_errors
+def get_group(group_id: str):
     logging.info(f"Récupération du groupe ID: {group_id}.")
     return {"group": vars(bdd_service.get_group(group_id))}
 
 
 @app.get("/group/get_by_user/{user_id}")
-def get_groups_by_user(user_id: int):
+@manage_errors
+def get_groups_by_user(user_id: str):
     logging.info(f"Récupération des groupes de l'utilisateur ID: {user_id}.")
     return {
             "user": user_id,
-            "groups": [vars(element) for element in bdd_service.get_groups_user(user_id)]
+            "groups": {
+                element.id: vars(element)
+                for element in bdd_service.get_groups_user(user_id)
+                }
             }
 
 
 @app.get("/group/get_users/{group_id}")
-def get_users_in_group(group_id: int):
+@manage_errors
+def get_users_in_group(group_id: str):
     logging.info(f"Récupération des utilisateurs dans le groupe ID: {group_id}.")
     return {
             "group": group_id,
-            "users": [vars(element) for element in bdd_service.get_users_in_group(group_id)]
+            "users": [
+                vars(element)
+                for element in bdd_service.get_users_in_group(group_id)
+                ]
             }
 
 
 # User Routes
 @app.get("/user/get/{user_id}")
-async def get_user(user_id: int):
+@manage_errors
+async def get_user(user_id: str):
     return {"user": vars(bdd_service.get_user(user_id))}
 
 
 @app.get("/user/auth/{user_id}")
-async def get_user_auth(auth_id: int):
+@manage_errors
+async def get_user_auth(auth_id: str):
     return {
             "auth": auth_id,
             "user": vars(bdd_service.get_user_auth(auth_id))
@@ -188,6 +214,7 @@ async def get_user_auth(auth_id: int):
 
 
 @app.post("/user/new")
+@manage_errors
 def create_user(name: str,
                 first_name: str,
                 email: str,
@@ -207,8 +234,9 @@ def create_user(name: str,
 
 
 @app.put("/user/modify/{user_id}")
+@manage_errors
 def modify_user(
-        user_id: int,
+        user_id: str,
         new_name: str,
         new_first_name: str,
         new_email: str
@@ -224,36 +252,48 @@ def modify_user(
             }
 
 @app.delete("/user/delete/{user_id}")
-def delete_user(user_id: int):
+@manage_errors
+def delete_user(user_id: str):
     bdd_service.delete_user(user_id)
     return {"user_deleted": user_id}
 
 
 @app.get("/user/get_by_email/{email}")
+@manage_errors
 def get_by_email(email: str):
     return {"user": vars(bdd_service.get_user_email(email))}
 
 
 @app.get("/user/get_all")
+@manage_errors
 def get_all_users():
     return {"users": [vars(element) for element in bdd_service.get_all_users()]}
 
 # Message Routes
 
 @app.delete("/message/delete/{message_id}")
-def delete_message(message_id: int):
+@manage_errors
+def delete_message(message_id: str):
     logging.info(f"Suppression du message ID: {message_id}.")
     bdd_service.delete_message(message_id)
     return {"message_deleted": message_id}
 
 
 @app.get("/message/get/{message_id}")
-def get_message(message_id: int):
+@manage_errors
+def get_message(message_id: str):
     logging.info(f"Récupération du message ID: {message_id}.")
     return {"message": vars(bdd_service.get_message(message_id))}
 
+@app.get("/message/get/group/{group_id}")
+@manage_errors
+def get_all_message_group(group_id: str):
+    logging.info(f"Récupération des messages du group {group_id}.")
+    return {"message": vars(bdd_service.get_all_messages_group(message_id))}
+
 
 @app.post("/message/create")
+@manage_errors
 def create_message(
         content: str,
         sender_id: str,
@@ -271,15 +311,20 @@ def create_message(
     return {"message_id": message_id, "message": vars(message)}
 
 @app.get("/media/get/{media_id}")
-def get_media(media_id: int):
+@manage_errors
+def get_media(media_id: str):
     logging.info(f"Récupération du média ID: {media_id}.")
     return {"media": vars(bdd_service.get_media(media_id))}
 
 
 @app.get("/media/get_by_message/{message_id}")
-def get_media_by_message(message_id: int):
+@manage_errors
+def get_media_by_message(message_id: str):
     logging.info(f"Récupération du média pour le message ID: {message_id}.")
     return {
             "message_id": message_id,
-            "medias": [vars(element) for element in bdd_service.get_medias_message(message_id)]
+            "medias": [
+                vars(element)
+                for element in bdd_service.get_medias_message(message_id)
+                ]
             }
