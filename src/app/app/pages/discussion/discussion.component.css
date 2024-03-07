@@ -1,0 +1,167 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+}
+
+a {
+    text-decoration: none;
+    color: #6ab337;
+    
+}
+
+ul {
+    list-style: none;
+    color: rgb(33, 51, 67);
+    
+}
+
+header {
+    min-height: 5rem;
+    background-color: rgb(240, 240, 240);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem;
+}
+
+header .logo {
+    font-size: 1.5rem;
+}
+
+header ul {
+    display: flex;
+    color: rgb(122, 167, 210);
+    
+}
+
+header ul li {
+    padding: 0.75rem;
+    color: rgb(122, 167, 210);
+    margin: 0 1rem;
+    border-radius: 15px;
+    
+}
+
+.hero {
+    /*background-image: url('assets/images/pfe3.png');*/
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    text-align: center;
+    padding: 0 2rem;
+}
+
+.hero h1 {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    color: rgb(6, 28, 90);
+}
+
+.hero p {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    max-width: 30rem;
+    color: rgb(2, 28, 57);
+}
+
+.hero button {
+    background-color: #052151;
+    color: #d8d1d1;
+    padding: 0.5rem 2rem;
+    border-radius: 0.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.hero button:hover {
+    background-color: #110d0d;
+    color: #dcd2d2;
+}
+
+.features {
+    padding: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.features h2 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    width: 100%;
+}
+
+.feature-card {
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    border-radius: 0.2rem;
+    width: calc(33.333% - 2rem);
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.feature-card img {
+    width: 100%;
+    border-radius: 0.2rem;
+    margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.feature-card p {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+
+
+.container {
+    margin-top: 50px;
+  }
+  
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .col-md-4 {
+    border: 1px solid #ccc;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+  
+  p {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+.rond{
+    border-radius: 20px;
+    /**width: 1000vh;**/
+    box-shadow: 0 0 10px 5px rgba(52, 52, 75, 0.5); 
+    height: 50px;
+}

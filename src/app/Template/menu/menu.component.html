@@ -1,0 +1,24 @@
+<nav class="navbar navbar-expand-lg custom-navbar">
+  <ul class="navbar-nav">
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/">Accueil</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/admin">Admin</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/discussion">Discussion</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/users">Utilisateurs</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/connexion" *ngIf="!auth.isLoggedIn">Connexion</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/" (click)="auth.isLoggedIn = false" *ngIf="auth.isLoggedIn">Déconnexion</a>
+    </li>
+  </ul>
+</nav>
+
+

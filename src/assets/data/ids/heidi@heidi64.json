@@ -1,0 +1,10 @@
+{
+    "nom":"Heidi",
+    "prenom":"Heidi",
+    "id":"heidi",
+    "email":"heidi@heidi.ch",
+    "infos":"Petite fille des montagnes",
+    "token":"melody.ye.isfollowing",
+    "statut":"user",
+    "avatar" :"assets/image/user1.jpeg"
+}

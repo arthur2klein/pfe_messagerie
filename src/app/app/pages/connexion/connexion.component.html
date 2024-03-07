@@ -1,0 +1,44 @@
+
+    <!--<section class="bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 offset-md-4 login-box">
+        <h3 class="text-center mb-4">Connexion à APP_ING3_CHAT</h3>
+        <form (ngSubmit)="authentification()">
+          <div class="mb-3">
+            <label for="email" class="form-label">Adresse e-mail</label>
+            <input type="email" class="form-control" id="email" name="email" [(ngModel)]="auth.authID.id" required>
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Mot de passe</label>
+            <input type="password" class="form-control" id="password" name="password" [(ngModel)]="auth.authID.mdp" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>-->
+
+<section>
+    <div class="container">
+            <div class="card-body">
+              <h1 class="text-center mb-4">Bienvenue sur APP_ING3_CHAT</h1>
+              <form (submit)="auth.authentification()">
+                <div class="mb-3">
+                  <label for="id" class="form-label">Email</label>
+                  <input type="text" class="form-control" id="id" name="id" placeholder="Entrez votre adresse e-mail" [(ngModel)]="auth.authID.id" required>
+                </div>
+                <div class="mb-3">
+                  <label for="mdp" class="form-label">Mot de passe</label>
+                  <input type="password" class="form-control" id="mdp" name="mdp" placeholder="Entrez votre mot de passe" [(ngModel)]="auth.authID.mdp" required>
+            </div>
+                <button routerLink="/discussion" type="submit" class="btn btn-primary btn-block">Se connecter</button>
+              </form>
+              <div class="text-center mt-3">
+                <p>Pas encore de compte ? <a routerLink="/inscription">Inscrivez-vous</a></p>
+              </div>
+           </div>
+    </div>
+</section>
+

@@ -1,0 +1,58 @@
+<style>
+    .divider {
+        border-right: 7px solidrgb(0, 0, 0)0; 
+        height: 700px; 
+    }
+</style>
+
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-4 border-end divider"> 
+                <h1></h1>
+    
+    
+    
+        <fieldset >
+            <input
+                class="rond"
+                name="filtre"
+                [(ngModel)]="filtre"
+                placeholder="Filtrer les contacts"
+            />
+        </fieldset>  
+   
+
+    <table>
+        <thead>
+            <tr>
+                <th>Noms</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="filter"  *ngFor="let u of filtrerUtilisateurs(); let i=index">
+                <td>{{ u.name }}</td>
+                
+            </tr>
+        </tbody>
+    </table>
+            </div>
+            <div class="col-8 d-flex border-start border-4" style="margin-top: 690px;">
+                <fieldset> 
+                    <input
+                      name="filtre"
+                      class="rond" 
+                      placeholder="Écrire un message"
+                      style="width: 1000px;" 
+                    />
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+    

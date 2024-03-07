@@ -1,0 +1,26 @@
+.menu-bar {
+    background-color: #8797a3; /* Couleur de fond du navbar */
+    padding: 5.66rem; /* Espace entre le contenu et les bords */
+  }
+  
+  .menu-bar ul {
+    list-style-type: none; /* Supprime les puces */
+    margin: 0; /* Supprime l'espace entre les éléments de la liste */
+    padding: 0; /* Supprime l'espace entre les éléments de la liste */
+    display: flex; /* Affiche les éléments de la liste en ligne */
+    justify-content: center; /* Centrer les éléments de la liste */
+  }
+  
+  .menu-bar li {
+    margin: 0 0.5rem; /* Espace entre les éléments de la liste */
+    color: #fff; /* Couleur du texte */
+  }
+  
+  .menu-bar li:hover {
+    text-decoration: underline; /* Ajoute une sous-lignée au survol */
+  }
+  
+  .menu-bar a {
+    color: #fff; /* Couleur du texte des liens */
+    text-decoration: none; /* Supprime le soulignement des liens */
+  }
