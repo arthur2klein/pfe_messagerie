@@ -1,8 +1,10 @@
 import {useState} from 'react';
 import './InscriptionForm.css'
 import UserService from '../services/UserService';
+import {useNavigate} from 'react-router-dom';
 
 const InscriptionForm: React.FC = () => {
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -25,7 +27,10 @@ const InscriptionForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      UserService.receiveInscription(formData);
+      const success = await UserService.receiveInscription(formData);
+      if (success) {
+        navigate('/');
+      }
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message)

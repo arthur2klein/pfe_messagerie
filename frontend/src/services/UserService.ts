@@ -201,7 +201,7 @@ class UserService {
     email: string;
     password: string;
     validate_password: string;
-  }) {
+  }): Promise<boolean> {
     const formValidation = await this.validateInscriptionForm(formData)
     if (formValidation !== "") {
       toast.error(formValidation);
@@ -216,7 +216,6 @@ class UserService {
       if (auth_id === '') {
         toast.error("Could not create the user");
         console.error("Could not create the user");
-        return;
       }
       const user = await this.addUser({
         id: '',
@@ -227,8 +226,10 @@ class UserService {
       if (user !== null) {
         UserService.currentUser = user;
         toast.success("User created");
+        return true;
       }
     }
+    return false;
   }
 
   static async createAuth(auth_info: {login: string; password: string;}): Promise<string> {
