@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import UserService from '../services/UserService';
 import './ViewMessagesPage.css'
 import {useNavigate} from 'react-router-dom';
@@ -7,10 +7,9 @@ import Message from '../models/Message';
 import MessageComponent from '../components/MessageComponent';
 import SelectGroupComponent from '../components/SelectGroupComponent';
 import CreateMessageComponent from '../components/CreateMessageComponent';
-import {Socket} from 'socket.io-client';
 
 const ViewMessagesPage: React.FC = () => {
-  const [socket, setSocket] = useState<Socket|null>(null);
+  const [socket, setSocket] = useState<WebSocket|null>(null);
 
   const [groups, setGroups] = useState<Record<string, Group>>({});
   const fetchData = async () => {
@@ -21,7 +20,10 @@ const ViewMessagesPage: React.FC = () => {
     fetchData();
   }, []);
 
+  const [messages, setMessages] = useState<Message[]>([]);
+
   const navigate = useNavigate();
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
       const isConnected = UserService.isConnected();
@@ -30,22 +32,40 @@ const ViewMessagesPage: React.FC = () => {
       }
       }, [navigate]);
 
+  // Scroll to the bottom of the container when messages are updated
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   const [selectedGroup, setSelectedGroup] = useState<Group>({
     id: '',
     name: '',
   });
 
-  const [messages, setMessages] = useState<Message[]>([]);
-
   const changeSocket = (selectedGroupId: string) => {
     console.log(`Creating socket for ${selectedGroupId}`);
-    socket?.disconnect();
+    socket?.close();
     const new_socket = UserService.create_socket(selectedGroupId);
-    new_socket.on('message', (data) => {
-      console.log(`Received message ${data}`);
-      messages.push(data.json as Message);
+    new_socket.addEventListener('message', (event) => {
+      console.log(`Received message ${event.data}`);
+      const messageData = JSON.parse(event.data) as Message;
+      addMessage(messageData);
     });
     setSocket(new_socket);
+  }
+
+  const addMessage = (messageData: Message) => {
+    setMessages((prevMessages) => {
+      const updatedMessages = [...prevMessages, messageData];
+      return updatedMessages;
+    });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight;
+    }
   }
 
   const handleGroupChange = async (selectedGroupId: string) => {
@@ -55,23 +75,23 @@ const ViewMessagesPage: React.FC = () => {
       setSelectedGroup({id: '', name: ''});
     }
     setMessages(await UserService.getAllMessages(selectedGroupId));
+    console.log(`onGroupChange: ${messages}`);
     changeSocket(selectedGroupId);
   };
 
-  const receiveMessage = (messageContent: string): void => {
-    const new_message = UserService.sendMessage(
+  const receiveMessage = async (messageContent: string): Promise<void> => {
+    const new_message = await UserService.sendMessage(
       messageContent,
       selectedGroup.id
     );
-    if (socket) {
-      socket.send(new_message);
-    } 
+    console.log(`Sent ${new_message} via socket`);
+    socket?.send(JSON.stringify(new_message));
   };
 
   return (
     <div className="container messages-page">
       <SelectGroupComponent groups={groups} selectedGroup={selectedGroup} onGroupGhange={handleGroupChange} />
-    <div className="view-message">
+    <div className="view-message" ref={messagesContainerRef}>
       {selectedGroup.id === ""?
         <h1>Please chose a group to display the messages</h1>
         :messages.map(m => (

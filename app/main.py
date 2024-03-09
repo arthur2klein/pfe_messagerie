@@ -23,13 +23,12 @@ from shared.services.authen import AuthService
 # FastAPI instance
 app = FastAPI()
 
-origins = ["*"]
 app.add_middleware(
         CORSMiddleware,
-        allow_origins=origins,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_origins = ["*"],
+        allow_credentials = True,
+        allow_methods = ["*"],
+        allow_headers = ["*"],
         )
 
 load_dotenv()
@@ -190,12 +189,14 @@ def init_message_socket():
 
 @app.websocket("/ws/message/{group_id}")
 async def message_ws(websocket: WebSocket, group_id: str):
+    print("Accepting socket")
     await websocket.accept()
     print("Socket accepted")
     active_connections.add((websocket, group_id))
     try:
         while True:
-            data = await websocket.receive_json()
+            print('WS: waiting for data')
+            data = await websocket.receive_text()
             print(f'WS: Received data {data}')
             for connection, connection_group_id in active_connections.copy():
                 if connection_group_id == group_id:

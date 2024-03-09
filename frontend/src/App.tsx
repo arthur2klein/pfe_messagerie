@@ -7,6 +7,7 @@ import ConnectionPage from "./pages/ConnectionPage";
 import ManagePage from "./pages/ManagePage";
 import UserPage from "./pages/UserPage";
 import Error404Page from "./pages/Error404Page";
+import NotificationComponent from "./components/NotificationComponent";
 
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
           </Routes>
           <Outlet />
         </div>
+        <NotificationComponent />
       </div>
     </BrowserRouter>
   );

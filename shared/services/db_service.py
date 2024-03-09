@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Type
+import os
 from shared.models.message import Message
 from shared.models.media import Media
 from shared.models.group import Group
@@ -94,11 +95,11 @@ class Service_bdd:
         """
         try:
             self.connection = psycopg2.connect(
-                    dbname = 'pfe_database',
-                    user = 'my_user',
-                    password = 'my_password',
-                    host = 'postgres',
-                    port = 5432,
+                    dbname = os.getenv("DATABASE", 'pfe_database'),
+                    user = os.getenv("USER", 'my_user'),
+                    password = os.getenv("PASSWORD", 'my_password'),
+                    host = os.getenv("HOST", 'postgres'),
+                    port = int(os.getenv("PORT", '5432')),
                     )
             self.cursor = self.connection.cursor()
         except Exception as e:
@@ -1109,7 +1110,7 @@ class Service_bdd:
         user_id = service_bdd.set_user(my_user, new_values)
         ```
         """
-        query = ('UPDATE "User" '
+        query = ('UPDATE "UserApp" '
                  'SET "name" = %s, "first_name" = %s, '
                  '"email" = %s WHERE "id" = %s')
         try:

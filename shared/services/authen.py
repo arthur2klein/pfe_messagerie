@@ -1,4 +1,5 @@
 import psycopg2
+import os
 import bcrypt
 from uuid import uuid4
 
@@ -9,11 +10,11 @@ class AuthService:
     def connect_db(self):
         """Établit une connexion à la base de données."""
         return psycopg2.connect(
-                dbname='pfe_database_auth',
-                user='my_user',
-                password='my_password',
-                host='auth_db',
-                port='5432',
+                dbname = os.getenv("AUTH_DATABASE", 'pfe_database_auth'),
+                user = os.getenv("AUTH_USER", 'my_user'),
+                password = os.getenv("AUTH_PASSWORD", 'my_password'),
+                host = os.getenv("AUTH_HOST", 'auth_db'),
+                port = int(os.getenv("AUTH_PORT", '5432')),
                 )
 
     def create_account(self, email: str, password: str):

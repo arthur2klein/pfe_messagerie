@@ -19,7 +19,8 @@ html, body, #root {
   display: grid;
   grid-template: 
     "tbar" max(2rem, 10%)
-    "cont" auto;
+    "cont" auto
+    "noti" 0;
   width: 100%;
   height: 100%;
 }
@@ -61,4 +62,8 @@ html, body, #root {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   opacity: 0.5;
   transition: opacity 0.5s ease-in-out;
+}
+
+.Toastify {
+  grid-area: noti;
 }

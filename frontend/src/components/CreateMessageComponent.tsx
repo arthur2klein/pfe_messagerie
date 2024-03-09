@@ -16,6 +16,13 @@ const CreateMessageComponent: React.FC<CreateMessageComponentProps> = ({
     adjustTextArea(e.target);
   }
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   const handleSendMessage = () => {
     if (messageContent.trim() !== '') {
       onSendMessage(messageContent);
@@ -35,6 +42,7 @@ const CreateMessageComponent: React.FC<CreateMessageComponentProps> = ({
         placeholder="Type your message..."
         value={messageContent}
         onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
       />
       <button className="send-message" onClick={handleSendMessage}>
         <FaPaperPlane />

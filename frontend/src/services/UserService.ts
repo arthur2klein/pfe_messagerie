@@ -1,10 +1,10 @@
 import User from "../models/User";
 import Group from "../models/Group";
 import Message from "../models/Message";
-import {Socket, io} from "socket.io-client";
+import {toast} from "react-toastify";
 
-const apiUrl: string = "http://localhost"
-const apiPort: string = "8000"
+const apiUrl: string = process.env.API_URL || "http://localhost";
+const apiPort: string = process.env.API_PORT || "8000";
 
 class UserService {
   static currentUser: User|undefined = undefined;
@@ -107,6 +107,9 @@ class UserService {
 
   static async getGroups(): Promise<Record<string, Group>> {
     if (UserService.currentUser === undefined) {
+      toast.error(
+        `Error while fetching groups for user: currentUser undefined`,
+      );
       console.error(
         `Error while fetching groups for user: currentUser undefined`,
       );
@@ -119,6 +122,7 @@ class UserService {
       );
       const json = await response.json();
       if (json['error'] !== undefined) {
+        toast.error(`Error while fetching groups for current user`);
         console.error(
           `Error while fetching groups for user_id ${user_id}: ${json['error']}`,
         );
@@ -126,6 +130,7 @@ class UserService {
       }
       return json['groups'];
     } catch (error) {
+      toast.error(`Error while fetching groups for current user`);
       console.error(error);
       return {};
     }
@@ -138,13 +143,15 @@ class UserService {
       );
       const json = await response.json();
       if (json['error'] !== undefined) {
+        toast.error(`Error while fetching messages for current user`);
         console.error(
-          `Error while fetching groups for user_id ${groupId}: ${json['error']}`,
+          `Error while fetching messages for user_id ${groupId}: ${json['error']}`,
         );
         return [];
       }
       return json['message'];
     } catch (error) {
+      toast.error(`Error while fetching messages for current user`);
       console.error(error);
       return [];
     }
@@ -197,6 +204,7 @@ class UserService {
   }) {
     const formValidation = await this.validateInscriptionForm(formData)
     if (formValidation !== "") {
+      toast.error(formValidation);
       console.error(formValidation);
     }
     else {
@@ -206,6 +214,7 @@ class UserService {
         password: formData.password,
       });
       if (auth_id === '') {
+        toast.error("Could not create the user");
         console.error("Could not create the user");
         return;
       }
@@ -217,6 +226,7 @@ class UserService {
       })
       if (user !== null) {
         UserService.currentUser = user;
+        toast.success("User created");
       }
     }
   }
@@ -236,6 +246,7 @@ class UserService {
       );
       const json = await response.json();
       if (json['error'] !== undefined) {
+        toast.error(`Error while creating the auth user`);
         console.error(
           `Error while creating the auth user: ${json['error']}`,
         );
@@ -243,12 +254,16 @@ class UserService {
       }
       return json['auth_id'];
     } catch (error) {
+      toast.error(`Error while creating the auth user`);
       console.error(error);
       return '';
     }
   }
 
   static async changePassword(new_password: string) {
+    if (new_password === "") {
+      return;
+    }
     try {
       const response = await fetch(
         `${apiUrl}:${apiPort}/auth/change`,
@@ -264,11 +279,15 @@ class UserService {
       );
       const json = await response.json();
       if (json['error'] !== undefined) {
+        toast.error(`Error while changing the password`);
         console.error(
           `Error while changing the auth user: ${json['error']}`,
         );
+      } else {
+        toast.success("Password changed");
       }
     } catch (error) {
+      toast.error(`Error while changing the password`);
       console.error(error);
     }
   }
@@ -291,6 +310,7 @@ class UserService {
       );
       const json = await response.json();
       if (json['error'] !== undefined) {
+        toast.error("Could not connect");
         console.error(
           `Error while changing the auth user: ${json['error']}`,
         );
@@ -298,7 +318,11 @@ class UserService {
       this.currentUser = await UserService.getUserEmail(
         formData.email
       ) ?? undefined;
+      if (this.currentUser !== undefined) {
+        toast.success("Connection successful");
+      }
     } catch (error) {
+      toast.error("Could not connect");
       console.error(error);
     }
   }
@@ -311,14 +335,17 @@ class UserService {
   }) {
     const formValidation = this.validateChange(formData)
     if (formValidation !== "") {
+      toast.error(formValidation);
       console.error(formValidation);
+    } else {
+      UserService.changeUser(formData.name, formData.first_name);
+      UserService.changePassword(formData.password);
     }
-    UserService.changeUser(formData.name, formData.first_name);
-    UserService.changePassword(formData.password);
   }
 
   static async changeUser(name: string, first_name: string) {
     if (UserService.currentUser === undefined) {
+      toast.error("No user logged in");
       console.error('No current user when changing infos');
       return;
     }
@@ -339,13 +366,17 @@ class UserService {
       );
       const json = await response.json();
       if (json['error'] !== undefined) {
+        toast.error("Could not change infomations");
         console.error(
           `Error while creating the user $user: ${json['error']}`,
         );
+      } else {
+        UserService.currentUser = json['user'] as User;
+        toast.success("Informations changed");
       }
-      UserService.currentUser = json['user'] as User;
     } catch (error) {
       console.error(error);
+      toast.error("Could not change infomations");
       return null;
     }
   }
@@ -454,12 +485,15 @@ class UserService {
       );
       const json = await response.json();
       if (json['error'] !== undefined) {
+        toast.error("Could not rename the group");
         console.error(
           `Error while renaming the group ${id}: ${json['error']}`,
         );
       } else {
+        toast.success("Group successfully renamed");
       }
     } catch (error) {
+      toast.error("Could not rename the group");
       console.error(error);
     }
   }
@@ -476,26 +510,24 @@ class UserService {
       );
       const json = await response.json();
       if (json['error'] !== undefined) {
+        toast.error("Could not create the group.");
         console.error(
           `Error while creating the group ${new_name}: ${json['error']}`,
         );
         return null;
+      } else {
+        toast.success("Group creation successful.");
+        return json['group'] as Group;
       }
-      return json['group'] as Group;
     } catch (error) {
+      toast.error("Could not create the group.");
       console.error(error);
       return null;
     }
   }
 
-  static create_socket(group_id: string): Socket {
-    const socket = io(`ws://${apiUrl}:${apiPort}/ws/message/${group_id}`, {
-      transports: ['websocket'],
-      withCredentials: true,
-      extraHeaders: {
-        'my-custom-header': 'abcd',
-      },
-    });
+  static create_socket(group_id: string): WebSocket {
+    const socket = new WebSocket (`${apiUrl.replace('http', 'ws')}:${apiPort}/ws/message/${group_id}`);
     console.log('Socket created');
     return socket;
   }
@@ -545,13 +577,17 @@ class UserService {
       );
       const json = await response.json();
       if (json['error'] !== undefined) {
+        toast.error("Could not create this group");
         console.error(
           `Error while adding the group ${name}: ${json['error']}`,
         );
         return null;
+      } else {
+        toast.success("Group successfully added");
+        return json['group'] as Group;
       }
-      return json['group'] as Group;
     } catch (error) {
+      toast.error("Could not create this group");
       console.error(error);
       return null;
     }
@@ -573,11 +609,15 @@ class UserService {
       );
       const json = await response.json();
       if (json['error'] !== undefined) {
+        toast.error("Could not add this user to the group");
         console.error(
           `Error while adding the user ${user_email} to ${group_id}: ${json['error']}`,
         );
+      }else {
+        toast.success("User successfully added");
       }
     } catch (error) {
+      toast.error("Could not add this user to the group");
       console.error(error);
     }
   }
