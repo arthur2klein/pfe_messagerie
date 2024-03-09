@@ -22,6 +22,9 @@ class Service_bdd:
           the given query on the database to fetch data.
         - change_query(Self,str,list[Any]=None) -> list[tuple[Any]]: Executes
           the given query on the database to change data.
+        - change_and_return_query(self,query,params) -> list[tuple[Any]]:
+          Executes the given query on the database to change data and return
+          columns.
         - close_connection(self): Close the connection to the database.
         - __del__(Self): Deletes the current instance.
         - get_all_messages_group(Self,str) ->
@@ -121,7 +124,7 @@ class Service_bdd:
         ```python
         service_bdd = Service_bdd()
         service_bdd.fetch_query(
-                "SELECT * FROM Table WHERE name = %s",
+                'SELECT * FROM "Table" WHERE "name" = %s',
                 ["name"]
                 )
         ```
@@ -130,6 +133,7 @@ class Service_bdd:
             self.cursor.execute(sql.SQL(query), params)
             res = self.cursor.fetchall()
         except Exception as e:
+            self.connection.rollback()
             raise DatabaseException(f'Failed to execute query {query}: {e}')
         return res
 
@@ -137,8 +141,39 @@ class Service_bdd:
             self: Self,
             query: str,
             params: list[Any]=None
-            ) -> list[tuple[Any]]:
+            ):
         """ Executes the given query on the database to change data.
+        ---
+        Parameters:
+            query (str): Query to execute, parameters use %s placeholders.
+            params (list[Any]): Parameters of the query.
+        ---
+        Raises:
+            (DatabaseException): If the query fails.
+        ---
+        Example:
+        ```python
+        service_bdd = Service_bdd()
+        service_bdd.change(
+                'SELECT * FROM "Table" WHERE name = %s',
+                ["name"]
+                )
+        ```
+        """
+        try:
+            self.cursor.execute(sql.SQL(query), params)
+            self.connection.commit()
+        except Exception as e:
+            self.connection.rollback()
+            raise DatabaseException(f'Failed to execute query {query}: {e}')
+
+    def change_and_return_query(
+            self: Self,
+            query: str,
+            params: list[Any]=None
+            ) -> list[tuple[Any]]:
+        """ Executes the given query on the database to change data and return
+        columns.
         ---
         Parameters:
             query (str): Query to execute, parameters use %s placeholders.
@@ -154,8 +189,8 @@ class Service_bdd:
         Example:
         ```python
         service_bdd = Service_bdd()
-        service_bdd.change(
-                "SELECT * FROM Table WHERE name = %s",
+        service_bdd.change_and_return_query(
+                'SELECT * FROM "Table" WHERE name = %s RETURNING name',
                 ["name"]
                 )
         ```
@@ -165,6 +200,7 @@ class Service_bdd:
             res = self.cursor.fetchall()
             self.connection.commit()
         except Exception as e:
+            self.connection.rollback()
             raise DatabaseException(f'Failed to execute query {query}: {e}')
         return res
 
@@ -218,9 +254,9 @@ class Service_bdd:
         """
         try:
             query_result = self.fetch_query(
-                    "SELECT * FROM message "
-                    "WHERE receiver_group_id = %s "
-                    "ORDER BY date ASC",
+                    'SELECT * FROM "Message" '
+                    'WHERE "receiver_group_id" = %s '
+                    'ORDER BY "date_" ASC',
                     [group_id]
                     )
         except Exception as e:
@@ -229,6 +265,19 @@ class Service_bdd:
                     f'{group_id=}: {e}'
                     )
         return [Message(*res[1:], id = res[0]) for res in query_result]
+
+    def verify_tables(self: Self) -> list[string]:
+        try:
+            query_result = self.fetch_query(
+                    'SELECT table_name FROM information_schema.tables '
+                    'WHERE table_schema = "public"',
+                    []
+                    )
+        except Exception as e:
+            raise DatabaseException(
+                    f'Could not get the table names: {e}'
+                    )
+        return {"data": query_result}
 
     def iter_message_first(self: Self, group_id: str) -> Message:
         """ Returns the first message to load for a given group.
@@ -274,9 +323,9 @@ class Service_bdd:
         """
         try:
             query_result = self.fetch_query(
-                    "SELECT * FROM message "
-                    "WHERE receiver_group_id = %s "
-                    "ORDER BY date ASC Limit 1",
+                    'SELECT * FROM "Message" '
+                    'WHERE "receiver_group_id" = %s '
+                    'ORDER BY "date_" ASC Limit 1',
                     [group_id]
                     )
         except Exception as e:
@@ -315,10 +364,10 @@ class Service_bdd:
         date = current.date
         try:
             query_result = self.fetch_query(
-                    "SELECT * FROM message "
-                    "WHERE receiver_group_id = %s "
-                    "AND date > %s "
-                    "ORDER BY date ASC Limit 1",
+                    'SELECT * FROM "Message" '
+                    'WHERE "receiver_group_id" = %s '
+                    'AND "date_" > %s '
+                    'ORDER BY "date_" ASC Limit 1',
                     [group_id, date]
                     )
         except Exception as e:
@@ -353,7 +402,7 @@ class Service_bdd:
         service_bdd.rename_group('4', 'new_name')
         ```
         """
-        query = "UPDATE groups SET name = %s WHERE id = %s"
+        query = 'UPDATE groups SET "name" = %s WHERE "id" = %s'
         try:
             self.change_query(query, [new_name, group_id])
         except Exception as e:
@@ -382,7 +431,7 @@ class Service_bdd:
         service_bdd.remove_user_from_group('user_id', 'group_id')
         ```
         """
-        query = 'DELETE FROM useringroup WHERE group_id = %s AND user_id = %s'
+        query = 'DELETE FROM "UserInGroup" WHERE "group_id" = %s AND "user_id" = %s'
         try:
             self.change_query(query, [user_id, group_id])
         except Exception as e:
@@ -412,7 +461,7 @@ class Service_bdd:
         service_bdd.remove_user_from_group('user_id', 'group_id')
         ```
         """
-        query = 'INSERT INTO useringroup (user_id, group_id) VALUES (%s, %s)'
+        query = 'INSERT INTO "UserInGroup" ("user_id", "group_id") VALUES (%s, %s)'
         try:
             self.change_query(query, [user_id, group_id])
         except Exception as e:
@@ -442,9 +491,9 @@ class Service_bdd:
         my_group_id = my_service.create_group(my_group)
         ```
         """
-        query = 'INSERT INTO groups (name) VALUES (%s) RETURNING id'
+        query = 'INSERT INTO "Group" (name) VALUES (%s) RETURNING id'
         try:
-            group_id = self.change_query(query, [group.name])[0][0]
+            group_id = self.change_and_return_query(query, [group.get_name()])[0][0]
             group.set_id(group_id)
         except Exception as e:
             raise DatabaseException(
@@ -460,7 +509,7 @@ class Service_bdd:
             group_id (str): Id of the group to get.
         ---
         Returns:
-            (Group): Group with the given id.
+            (Optional[Group]): Group with the given id.
         ---
         Raises:
             (DatabaseException): If the querry fails.
@@ -473,9 +522,11 @@ class Service_bdd:
         assert(my_group == service_bdd.get_group(my_group_id))
         ```
         """
-        query = 'SELECT * FROM groups WHERE id = %s'
+        query = 'SELECT * FROM "Group" WHERE "id" = %s'
         try:
             group = self.fetch_query(query, [group_id])[0]
+        except IndexError:
+            return None
         except Exception as e:
             raise DatabaseException(f'Could not get the group {group_id}: {e}')
         return Group(*group[1:], id = group[0])
@@ -499,9 +550,9 @@ class Service_bdd:
         groups = service_bdd.get_groups_user('user_id')
         ```
         """
-        query = ('SELECT groups.* FROM groups '
-                 'JOIN useringroup ON groups.id = useringroup.group_id '
-                 'WHERE useringroup.user_id = %s')
+        query = ('SELECT "Group".* FROM "Group" '
+                 'JOIN "UserInGroup" ON "Group"."id" = "UserInGroup"."group_id" '
+                 'WHERE "UserInGroup"."user_id" = %s')
         try:
             groups = self.fetch_query(query, [user_id])
         except Exception as e:
@@ -511,7 +562,7 @@ class Service_bdd:
         return [Group(*line[1:], id = line[0]) for line in groups]
 
     def create_message(self: Self, message: Message) -> str:
-        """ Create a new message in the database.
+        """ Create a new Message in the database.
         ---
         Parameters:
             self (Self): Current instance.
@@ -537,11 +588,11 @@ class Service_bdd:
         message_id = service_bdd.create_message(my_message)
         ```
         """
-        query = ('INSERT INTO messages '
+        query = ('INSERT INTO "Message" '
                  '(content, sender_id, receiver_group_id, date_) '
-                 'VALUES (%s, %s, %s) RETURNING id')
+                 'VALUES (%s, %s, %s, %s) RETURNING id')
         try:
-            message_id = self.change_query(
+            message_id = self.change_and_return_query(
                     query,
                     [message.get_content(),
                      message.get_sender_id(),
@@ -640,7 +691,7 @@ class Service_bdd:
             print(media)
         ```
         """
-        query = 'SELECT * FROM medias WHERE message_id = %s'
+        query = 'SELECT * FROM "Media" WHERE "message_id" = %s'
         try:
             medias = self.fetch_query(query, [message_id])
         except Exception as e:
@@ -658,7 +709,7 @@ class Service_bdd:
             message_id (str): Id of the message to get.
         ---
         Returns:
-            (Message): Message with the given id.
+            (Optional[Message]): Message with the given id.
         ---
         Raises:
             (DatabaseException): If the query fails.
@@ -669,9 +720,11 @@ class Service_bdd:
         message = service_bdd.get_message('message_id')
         ```
         """
-        query = 'SELECT * FROM messages WHERE id = %s'
+        query = 'SELECT * FROM "Message" WHERE "id" = %s'
         try:
             message = self.fetch_query(query, [message_id])[0]
+        except IndexError:
+            return None
         except Exception as e:
             raise DatabaseException(
                     f'Could not get the message {message_id}: {e}'
@@ -694,7 +747,7 @@ class Service_bdd:
         message = service_bdd.delete_message('message_id')
         ```
         """
-        query = 'DELETE FROM messages WHERE id = %s'
+        query = 'DELETE FROM "Message" WHERE "id" = %s'
         try:
             self.change_query(query, [message_id])
         except Exception as e:
@@ -721,9 +774,11 @@ class Service_bdd:
         media = service_bdd.get_media('media_id')
         ```
         """
-        query = 'SELECT * FROM medias WHERE id = %s'
+        query = 'SELECT * FROM "Media" WHERE "id" = %s'
         try:
             media = self.fetch_query(query, [media_id])[0]
+        except IndexError:
+            return None
         except Exception as e:
             raise DatabaseException(
                     f'Could not get the media {media_id}: {e}'
@@ -791,9 +846,11 @@ class Service_bdd:
         my_media = service_bdd.get_media('media_id')
         ```
         """
-        query = 'SELECT * FROM medias WHERE id = %s'
+        query = 'SELECT * FROM "Media" WHERE "id" = %s'
         try:
             line = self.fetch_query(query, [media_id])[0]
+        except IndexError:
+            return None
         except Exception as e:
             raise DatabaseException(
                     f'Could not get the media {media_id}: {e}'
@@ -821,7 +878,7 @@ class Service_bdd:
         service_bdd.delete_media(media_id)
         ```
         """
-        query = 'DELETE FROM medias WHERE id = %s'
+        query = 'DELETE FROM "Media" WHERE "id" = %s'
         try:
             self.change_query(query, [media_id])
         except Exception as e:
@@ -856,18 +913,21 @@ class Service_bdd:
         assert(user_id == my_user.get_id())
         ```
         """
-        query = ('INSERT INTO users (name, first_name, email, auth_id) '
+        query = ('INSERT INTO "UserApp" (name, first_name, email, auth_id) '
                  'VALUES (%s, %s, %s, %s) RETURNING id')
         try:
-            user_id = self.change_query(
+            user_id = self.change_and_return_query(
                     query,
                     [user.get_name(),
                      user.get_first_name(),
+                     user.get_email(),
                      user.get_auth_id()]
                     )[0][0]
             user.set_id(user_id)
-        except Exception as e:
-            raise DatabaseException(f'Could not create the user {user}: {e}')
+        except Exception as error:
+            raise DatabaseException(
+                    f'Could not create the user {user}: {str(error)}'
+                    )
         return user_id
 
     def delete_user(self: Self, user_id: str):
@@ -894,7 +954,7 @@ class Service_bdd:
         service_bdd.delete_user(user_id)
         ```
         """
-        query = 'DELETE FROM users WHERE id = %s'
+        query = 'DELETE FROM "UserApp" WHERE "id" = %s'
         try:
             self.change_query(query, [user_id])
         except Exception as e:
@@ -929,9 +989,11 @@ class Service_bdd:
         assert(my_user == service_bdd.get_user(user_id))
         ```
         """
-        query = 'SELECT * FROM users WHERE id = %s'
+        query = 'SELECT * FROM "UserApp" WHERE "id" = %s'
         try:
             line = self.fetch_query(query, [user_id])[0]
+        except IndexError:
+            return None
         except Exception as e:
             raise DatabaseException(
                     f'Could not get the user {user_id}: {e}'
@@ -966,9 +1028,11 @@ class Service_bdd:
         assert(my_user == service_bdd.get_user_auth('auth_id'))
         ```
         """
-        query = 'SELECT * FROM users WHERE auth_id = %s'
+        query = 'SELECT * FROM "UserApp" WHERE "auth_id" = %s'
         try:
             line = self.fetch_query(query, [auth_id])[0]
+        except IndexError:
+            return None
         except Exception as e:
             raise DatabaseException(
                     f'Could not get the user with {auth_id=}: {e}'
@@ -983,7 +1047,7 @@ class Service_bdd:
             email (str): Email address of the wanted user.
         ---
         Returns:
-            (User): User with the given email.
+            (Optional[User]): User with the given email if found.
         ---
         Raises:
             (DatabaseException): If the query fails.
@@ -1002,9 +1066,11 @@ class Service_bdd:
         assert(my_user == service_bdd.get_user_email('e@mail.com'))
         ```
         """
-        query = 'SELECT * FROM users WHERE email = %s'
+        query = 'SELECT * FROM "UserApp" WHERE "email" = %s'
         try:
             line = self.fetch_query(query, [email])[0]
+        except IndexError:
+            return None
         except Exception as e:
             raise DatabaseException(
                     f'Could not get the user with {email=}: {e}'
@@ -1043,9 +1109,9 @@ class Service_bdd:
         user_id = service_bdd.set_user(my_user, new_values)
         ```
         """
-        query = ('UPDATE users '
-                 'SET name = %s, first_name = %s, '
-                 'email = %s WHERE id = %s')
+        query = ('UPDATE "User" '
+                 'SET "name" = %s, "first_name" = %s, '
+                 '"email" = %s WHERE "id" = %s')
         try:
             self.change_query(
                     query,
@@ -1077,11 +1143,12 @@ class Service_bdd:
         all_users = service_bdd.get_all_users()
         ```
         """
-        query = 'SELECT * FROM users'
+        query = 'SELECT * FROM "UserApp"'
         try:
             lines = self.fetch_query(query)
         except Exception as e:
             raise DatabaseException(f'Could not get all the users: {e}.')
+        print(lines)
         return [User(*line[1:], id = line[0]) for line in lines]
 
     def get_users_in_group(self: Self, group_id: str) -> list[User]:
@@ -1103,9 +1170,9 @@ class Service_bdd:
         users = service_bdd.get_users_in_group('group_id')
         ```
         """
-        query = ('SELECT users.* FROM users '
-                 'JOIN useringroup ON user.id = useringroup.user_id '
-                 'WHERE useringroup.group_id = %s')
+        query = ('SELECT "UserApp".* FROM "UserApp" '
+                 'JOIN "UserInGroup" ON "UserApp"."id" = "UserInGroup"."user_id" '
+                 'WHERE "UserInGroup"."group_id" = %s')
         try:
             lines = self.fetch_query(query, [group_id])
         except Exception as e:

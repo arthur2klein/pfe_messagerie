@@ -1,6 +1,9 @@
+import {useCallback, useEffect, useState} from 'react';
 import Message from '../models/Message';
+import User from '../models/User';
 import UserService from '../services/UserService';
 import './MessageComponent.css';
+import Group from '../models/Group';
 
 interface MessageComponentProps {
   message: Message,
@@ -9,10 +12,23 @@ interface MessageComponentProps {
 const MessageComponent: React.FC<MessageComponentProps> = (
   props
 ) => {
-  const sender = UserService.getUserFromId(props.message.sender_id)
+  const [sender, setSender] = useState<User>();
+  const [receiver, setReceiver] = useState<Group>();
+  const fetchData = useCallback(async () => {
+    const senderData = await UserService.getUserFromId(
+      props.message.sender_id
+    ) ?? undefined;
+    const receiverData = await UserService.getGroupFromId(
+      props.message.receiver_group_id
+    ) ?? undefined;
+    setSender(senderData);
+    setReceiver(receiverData);
+  }, [props.message.sender_id, props.message.receiver_group_id]);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
   const isSender = UserService.getUser()?.id === sender?.id;
-  const receiver = UserService.getGroupFromId(props.message.receiver_group_id)
-  const date = new Date(props.message.date * 1000);
+  const date = new Date(props.message.date);
   return (
     <div className={`message ${isSender? "sender": "receiver"}`}>
       <div className="message-content">{ props.message.content }</div>

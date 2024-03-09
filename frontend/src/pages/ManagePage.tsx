@@ -9,7 +9,16 @@ import AddGroupForm from '../components/AddGroupForm';
 
 const ManagePage: React.FC = () => {
   const navigate = useNavigate();
-  const groups = UserService.getGroups();
+
+  const [groups, setGroups] = useState<Record<string, Group>>({});
+  const fetchData = async () => {
+    const groupsData = await UserService.getGroups();
+    setGroups(groupsData);
+  }
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const [selectedGroup, setSelectedGroup] = useState<Group>({
     id: '',
     name: '',
@@ -17,6 +26,7 @@ const ManagePage: React.FC = () => {
   const handleGroupChange = (selectedGroupId: string) => {
     setSelectedGroup(groups[selectedGroupId]);
   };
+
 
   useEffect(() => {
     const isConnected = UserService.isConnected();

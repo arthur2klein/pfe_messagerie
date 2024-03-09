@@ -58,7 +58,7 @@ const ManageGroupForm: React.FC<ManageGroupFormProps> = ({group}) => {
           <label>Email of user to add: </label>
           <input
             type="email"
-            name="email"
+            name="user_email"
             placeholder="User to add"
             value={formData.user_email}
             onChange={handleChange}

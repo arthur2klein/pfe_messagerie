@@ -43,8 +43,8 @@ class User:
         first_name: str,
         email: str,
         join_date: int,
+        auth_id: Optional[str] = None,
         id: Optional[str] = None,
-        auth_id: Optional[str] = None
     ):
         """ Creates a new User.
         ---

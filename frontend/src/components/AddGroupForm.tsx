@@ -21,7 +21,10 @@ const AddGroupForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      UserService.receiveGroupAdd(formData.name);
+      const group = await UserService.receiveGroupAdd(formData.name);
+      if (group !== null && UserService.currentUser !== undefined) {
+        UserService.receiveGroupGrow(group.id, UserService.currentUser.email);
+      }
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message)
@@ -37,7 +40,7 @@ const AddGroupForm: React.FC = () => {
           <label>Name of my new group: </label>
           <input
             type="text"
-            name="new_name"
+            name="name"
             placeholder="Name of the group"
             value={formData.name}
             onChange={handleChange}

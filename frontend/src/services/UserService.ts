@@ -1,8 +1,9 @@
 import User from "../models/User";
 import Group from "../models/Group";
 import Message from "../models/Message";
+import {Socket, io} from "socket.io-client";
 
-const apiUrl: string = "api"
+const apiUrl: string = "http://localhost"
 const apiPort: string = "8000"
 
 class UserService {
@@ -179,7 +180,7 @@ class UserService {
           `Error while creating the user $user: ${json['error']}`,
         );
         return null;
-      } 
+      }
       return json['user'] as User;
     } catch (error) {
       console.error(error);
@@ -194,16 +195,20 @@ class UserService {
     password: string;
     validate_password: string;
   }) {
-    const formValidation = this.validateInscriptionForm(formData)
+    const formValidation = await this.validateInscriptionForm(formData)
     if (formValidation !== "") {
-      throw new Error(formValidation);
+      console.error(formValidation);
     }
     else {
       const { password, validate_password, ...dataWithout } = formData;
-      const auth_id = this.createAuth({
-        'login': formData.email,
-        'password': password,
+      const auth_id = await this.createAuth({
+        login: formData.email,
+        password: formData.password,
       });
+      if (auth_id === '') {
+        console.error("Could not create the user");
+        return;
+      }
       const user = await this.addUser({
         id: '',
         auth_id: auth_id,
@@ -216,25 +221,85 @@ class UserService {
     }
   }
 
-  static createAuth(auth_info: {login: string; password: string;}): string {
-    throw new Error("Method not implemented.");
+  static async createAuth(auth_info: {login: string; password: string;}): Promise<string> {
+    try {
+      const response = await fetch(
+        `${apiUrl}:${apiPort}/auth/create`,
+        {
+          method: 'POST',
+          headers: { 'Content-type': 'application/json' },
+          body: JSON.stringify({
+            email: auth_info.login,
+            password: auth_info.password,
+          }),
+        },
+      );
+      const json = await response.json();
+      if (json['error'] !== undefined) {
+        console.error(
+          `Error while creating the auth user: ${json['error']}`,
+        );
+        return '';
+      }
+      return json['auth_id'];
+    } catch (error) {
+      console.error(error);
+      return '';
+    }
   }
 
-  static changePassword(new_password: string) {
-    throw new Error("Method not implemented.");
+  static async changePassword(new_password: string) {
+    try {
+      const response = await fetch(
+        `${apiUrl}:${apiPort}/auth/change`,
+        {
+          method: 'POST',
+          headers: { 'Content-type': 'application/json' },
+          body: JSON.stringify({
+            old_email: this.currentUser!.email,
+            email: this.currentUser!.email,
+            password: new_password,
+          }),
+        },
+      );
+      const json = await response.json();
+      if (json['error'] !== undefined) {
+        console.error(
+          `Error while changing the auth user: ${json['error']}`,
+        );
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  static receiveConnection(formData: {
+  static async receiveConnection(formData: {
     email: string;
     password: string;
   }) {
-    if (
-      formData.email === this.testUser.email &&
-      formData.password === "password"
-    ) {
-      this.currentUser = this.testUser;
-    } else {
-      throw new Error("User not found");
+    try {
+      const response = await fetch(
+        `${apiUrl}:${apiPort}/auth/login`,
+        {
+          method: 'POST',
+          headers: { 'Content-type': 'application/json' },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        },
+      );
+      const json = await response.json();
+      if (json['error'] !== undefined) {
+        console.error(
+          `Error while changing the auth user: ${json['error']}`,
+        );
+      }
+      this.currentUser = await UserService.getUserEmail(
+        formData.email
+      ) ?? undefined;
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -246,7 +311,7 @@ class UserService {
   }) {
     const formValidation = this.validateChange(formData)
     if (formValidation !== "") {
-      throw new Error(formValidation);
+      console.error(formValidation);
     }
     UserService.changeUser(formData.name, formData.first_name);
     UserService.changePassword(formData.password);
@@ -277,7 +342,7 @@ class UserService {
         console.error(
           `Error while creating the user $user: ${json['error']}`,
         );
-      } 
+      }
       UserService.currentUser = json['user'] as User;
     } catch (error) {
       console.error(error);
@@ -285,13 +350,13 @@ class UserService {
     }
   }
 
-  static validateInscriptionForm(formData: {
+  static async validateInscriptionForm(formData: {
     name: string;
     first_name: string;
     email: string;
     password: string;
     validate_password: string;
-  }): string {
+  }): Promise<string> {
     if (formData.password !== formData.validate_password)
       return 'Passwords don\'t match.';
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -307,7 +372,8 @@ class UserService {
     if (this.isWeakPassword(formData.password)) {
       return 'Password too weak';
     }
-    if (this.getUserEmail(formData.email) !== undefined) {
+    const other_user = await this.getUserEmail(formData.email);
+    if (other_user !== null) {
       return 'Email already in use';
     }
     return '';
@@ -358,7 +424,11 @@ class UserService {
         );
         return null;
       }
-      return json['user'] as User;
+      const user_json = json['user'];
+      if (user_json === undefined) {
+        return null;
+      }
+      return user_json as User;
     } catch (error) {
       console.error(error);
       return null;
@@ -387,7 +457,8 @@ class UserService {
         console.error(
           `Error while renaming the group ${id}: ${json['error']}`,
         );
-      } 
+      } else {
+      }
     } catch (error) {
       console.error(error);
     }
@@ -400,9 +471,7 @@ class UserService {
         {
           method: 'POST',
           headers: { 'Content-type': 'application/json' },
-          body: JSON.stringify({
-            name: new_name,
-          }),
+          body: `"${ new_name }"`,
         },
       );
       const json = await response.json();
@@ -411,7 +480,7 @@ class UserService {
           `Error while creating the group ${new_name}: ${json['error']}`,
         );
         return null;
-      } 
+      }
       return json['group'] as Group;
     } catch (error) {
       console.error(error);
@@ -419,7 +488,22 @@ class UserService {
     }
   }
 
-  static async sendMessage(messageContent: string, group_id: string) {
+  static create_socket(group_id: string): Socket {
+    const socket = io(`ws://${apiUrl}:${apiPort}/ws/message/${group_id}`, {
+      transports: ['websocket'],
+      withCredentials: true,
+      extraHeaders: {
+        'my-custom-header': 'abcd',
+      },
+    });
+    console.log('Socket created');
+    return socket;
+  }
+
+  static async sendMessage(
+    messageContent: string,
+    group_id: string
+  ): Promise<Message|null> {
     try {
       const response = await fetch(
         `${apiUrl}:${apiPort}/message/create`,
@@ -439,9 +523,13 @@ class UserService {
         console.error(
           `Error while creating a message: ${json['error']}`,
         );
-      } 
+        return null;
+      } else {
+        return json['message'] as Message;
+      }
     } catch (error) {
       console.error(error);
+      return null;
     }
   }
 
@@ -452,9 +540,7 @@ class UserService {
         {
           method: 'POST',
           headers: { 'Content-type': 'application/json' },
-          body: JSON.stringify({
-            name: name
-          }),
+          body: `"${ name }"`,
         },
       );
       const json = await response.json();
@@ -463,7 +549,7 @@ class UserService {
           `Error while adding the group ${name}: ${json['error']}`,
         );
         return null;
-      } 
+      }
       return json['group'] as Group;
     } catch (error) {
       console.error(error);
@@ -479,12 +565,10 @@ class UserService {
       }
       const user_id: string = user!.id;
       const response = await fetch(
-        `${apiUrl}:${apiPort}/add_user/${group_id}/${user_id}`,
+        `${apiUrl}:${apiPort}/group/add_user/${group_id}/${user_id}`,
         {
           method: 'POST',
           headers: { 'Content-type': 'application/json' },
-          body: JSON.stringify({
-          }),
         },
       );
       const json = await response.json();
@@ -492,7 +576,7 @@ class UserService {
         console.error(
           `Error while adding the user ${user_email} to ${group_id}: ${json['error']}`,
         );
-      } 
+      }
     } catch (error) {
       console.error(error);
     }
