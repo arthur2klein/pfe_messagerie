@@ -27,6 +27,14 @@ const ManagePage: React.FC = () => {
     setSelectedGroup(groups[selectedGroupId]);
   };
 
+  const addGroup = (newGroup: Group) => {
+    setGroups((prevGroups) => {
+      const group_id = newGroup.id;
+      const updatedGroups = {...prevGroups, [group_id]: newGroup};
+      return updatedGroups;
+    });
+  }
+
 
   useEffect(() => {
     const isConnected = UserService.isConnected();
@@ -46,7 +54,7 @@ const ManagePage: React.FC = () => {
         <ManageGroupForm group={selectedGroup} />
         :<h1>Select a group to edit it</h1>
       }
-      <AddGroupForm />
+      <AddGroupForm onGroupAdd={addGroup} />
     </div>
   );
 }

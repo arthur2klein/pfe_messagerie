@@ -1,8 +1,13 @@
 import {useState} from 'react';
 import './AddGroupForm.css'
 import UserService from '../services/UserService';
+import Group from '../models/Group';
 
-const AddGroupForm: React.FC = () => {
+interface GroupAddComponentProps {
+  onGroupAdd: (newGroup: Group) => void;
+} 
+
+const AddGroupForm: React.FC<GroupAddComponentProps> = ({ onGroupAdd }) => {
 
   const [formData, setFormData] = useState({
     name: '',
@@ -24,6 +29,7 @@ const AddGroupForm: React.FC = () => {
       const group = await UserService.receiveGroupAdd(formData.name);
       if (group !== null && UserService.currentUser !== undefined) {
         UserService.receiveGroupGrow(group.id, UserService.currentUser.email);
+        onGroupAdd(group);
       }
     } catch (error) {
       if (error instanceof Error) {
