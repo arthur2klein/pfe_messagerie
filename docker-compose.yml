@@ -7,24 +7,11 @@ services:
       POSTGRES_DB: pfe_database
       POSTGRES_USER: my_user
       POSTGRES_PASSWORD: my_password
-    ports:
-      - "5433:5432"
     volumes:
       - ./config/database/init.sql:/docker-entrypoint-initdb.d/init.sql
       # - ./config/database/init-log-directory.sh:/docker-entrypoint-initdb.d/init-log-directory.sh
       # - ./config/database/postgres.conf:/etc/postgresql/postgresql.conf
       # - ./logs/:/var/log/postgresql/
-    networks:
-      - backend
-
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-      PGADMIN_LISTEN_PORT: 5050
-    ports:
-      - "5050:5050"
     networks:
       - backend
 
@@ -34,8 +21,6 @@ services:
       POSTGRES_DB: pfe_database_auth
       POSTGRES_USER: my_user
       POSTGRES_PASSWORD: my_password
-    ports:
-      - "5434:5432"
     volumes:
       - ./config/database_auth/init.sql:/docker-entrypoint-initdb.d/init.sql
       # - ./config/database/init-log-directory.sh:/docker-entrypoint-initdb.d/init-log-directory.sh
