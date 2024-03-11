@@ -1,4 +1,5 @@
 fastapi~=0.109.0
+websockets==12.0
 uvicorn~=0.27.0.post1
 psycopg2-binary==2.9.1
 SQLAlchemy~=2.0.25
@@ -8,3 +9,4 @@ pydantic~=2.6.0
 python-dotenv~=0.14.0
 strawberry-graphql==0.117.1
 python-jose[cryptography,PyJWT]
+bcrypt==4.1.2

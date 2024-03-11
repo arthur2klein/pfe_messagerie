@@ -1,5 +1,6 @@
+from __future__ import annotations
+from typing import Type
 from shared.models.message import Message
-from shared.servies.service_bdd import Service_bdd
 
 class Message_iterator:
     """ Iterator over the list of message of a given group.
@@ -14,7 +15,7 @@ class Message_iterator:
         __next__(Self) -> Message: Advance the iterator to the next message.
     """
 
-    def __iter__(self: Self, group_id: str, db_access: Service_bdd) -> Self:
+    def __iter__(self: Self, group_id: str, db_access) -> Self:
         """ Creates a new iterator for the given group.
         ---
         Parameters:

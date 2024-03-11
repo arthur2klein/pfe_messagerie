@@ -1,0 +1,69 @@
+:root {
+  --main-background: #000000;
+  --secondary-background: #384955;
+  --accent-background: #4B0082;
+  --main-text: #FFFFFF;
+  --accent-text: #88B0CD;
+  --secondary-text: #327EA7;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  color: var(--main-text);
+  background: var(--main-background);
+}
+
+.App {
+  text-align: center;
+  display: grid;
+  grid-template: 
+    "tbar" max(2rem, 10%)
+    "cont" auto
+    "noti" 0;
+  width: 100%;
+  height: 100%;
+}
+
+.app-bar {
+  background-color: var(--secondary-background);
+  border-bottom: 0.1rem solid var(--secondary-text);
+  grid-area: tbar;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.app-name {
+  color: var(--accent-text);
+  margin: 1rem;
+}
+
+.app-content {
+  grid-area: cont;
+  background: linear-gradient(165deg, var(--main-background) 40%, var(--secondary-background));
+}
+
+.container {
+  height: 100%;
+  width: 100%;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--secondary-background);
+  color: var(--main-text);
+  padding: 10px 15px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  opacity: 0.5;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.Toastify {
+  grid-area: noti;
+}

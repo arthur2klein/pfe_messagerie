@@ -1,10 +1,13 @@
-CREATE ROLE minimal_user;
-GRANT USAGE ON SCHEMA public TO regular_user;
+CREATE ROLE minimal_user WITH LOGIN PASSWORD 'minimal_password';
+GRANT USAGE ON SCHEMA public TO minimal_user;
 
-CREATE ROLE admin_user;
+
+CREATE ROLE admin_user WITH LOGIN PASSWORD 'admin_password';
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO admin_user;
 
-CREATE TABLE IF NOT EXISTS "User" (
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO my_user;
+
+CREATE TABLE IF NOT EXISTS "UserApp" (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     first_name VARCHAR(255),
@@ -20,8 +23,16 @@ CREATE TABLE IF NOT EXISTS "Group" (
 
 CREATE TABLE IF NOT EXISTS "UserInGroup" (
     id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES "User" (id) ON DELETE CASCADE,
+    user_id INT REFERENCES "UserApp" (id) ON DELETE CASCADE,
     group_id INT REFERENCES "Group" (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "Message" (
+    id SERIAL PRIMARY KEY,
+    content TEXT NOT NULL,
+    sender_id INT REFERENCES "UserApp" (id) ON DELETE CASCADE,
+    receiver_group_id INT REFERENCES "Group" (id) ON DELETE CASCADE,
+    date_ BIGINT
 );
 
 CREATE TABLE IF NOT EXISTS "Media" (
@@ -30,12 +41,3 @@ CREATE TABLE IF NOT EXISTS "Media" (
     link VARCHAR(255) NOT NULL,
     message_id INT REFERENCES "Message" (id) ON DELETE CASCADE
 );
-
-CREATE TABLE IF NOT EXISTS "Message" (
-    id SERIAL PRIMARY KEY,
-    content TEXT NOT NULL,
-    sender_id INT REFERENCES "User" (id) ON DELETE CASCADE,
-    receiver_group_id INT REFERENCES "Group" (id) ON DELETE CASCADE,
-    date_ TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
