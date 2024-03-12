@@ -25,3 +25,14 @@ select {
   padding: 0.3rem;
   border-radius: 0.6rem;
 }
+
+.members {
+  display: flex;
+}
+
+.member {
+  border: 1px solid white;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  margin: 1rem;
+}

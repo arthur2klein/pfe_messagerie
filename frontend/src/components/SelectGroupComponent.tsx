@@ -1,5 +1,8 @@
+import {useState} from 'react';
 import Group from '../models/Group';
 import './SelectGroupComponent.css'
+import User from '../models/User';
+import UserService from '../services/UserService';
 
 interface SelectGroupProps {
   groups: Record<string, Group>;
@@ -12,13 +15,25 @@ const SelectGroupComponent: React.FC<SelectGroupProps> = ({
   selectedGroup,
   onGroupGhange
 }) => {
+  const [users, setUsers] = useState<User[]>([]);
+  async function load_group_members(group_id: string) {
+    setUsers(await UserService.getUserGroup(group_id));
+  }
+
   return (
     <div className="select-group">
+      <div className="members">
+        {users.map((u) => (
+          <div className="member">{u.name} {u.first_name}</div>
+        ))}
+      </div>
       <select
         value={selectedGroup.id || ''}
         onChange={
-          (e: React.ChangeEvent<HTMLSelectElement>) =>
-            onGroupGhange(e.target.value)
+          (e: React.ChangeEvent<HTMLSelectElement>) => {
+              load_group_members(e.target.value);
+              onGroupGhange(e.target.value);
+            }
         }
       >
         <option value="">Select a group</option>
