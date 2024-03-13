@@ -15,7 +15,7 @@ function App() {
     <BrowserRouter>
       <div className="App">
         <header className="app-bar">
-          <h1 className="app-name">PFE Messagerie</h1>
+          <h1 className="app-name">MESSECURE.</h1>
           <AppMenu />
         </header>
         <div className="app-content">
