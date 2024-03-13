@@ -4,7 +4,6 @@ import User from '../models/User';
 import UserService from '../services/UserService';
 import './MessageComponent.css';
 import Group from '../models/Group';
-import Encryption from '../services/Encryption';
 
 interface MessageComponentProps {
   message: Message,
