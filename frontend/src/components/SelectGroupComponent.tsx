@@ -31,8 +31,10 @@ const SelectGroupComponent: React.FC<SelectGroupProps> = ({
         value={selectedGroup.id || ''}
         onChange={
           (e: React.ChangeEvent<HTMLSelectElement>) => {
-              load_group_members(e.target.value);
-              onGroupGhange(e.target.value);
+              const v = e.target.value;
+              if (!v) return;
+              load_group_members(v);
+              onGroupGhange(v);
             }
         }
       >

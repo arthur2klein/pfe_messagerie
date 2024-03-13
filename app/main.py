@@ -384,6 +384,15 @@ def delete_user(user_id: str):
         res = {"error": str(e)}
     return res
 
+@app.get("/user/get_by_name/{name}")
+def get_by_name(name: str):
+    try:
+        user_or_none = bdd_service.get_user_name(name)
+        res = {"users": [vars(i) for i in user_or_none]}
+    except DatabaseException as e:
+        res = {"error": str(e)}
+    return res
+
 @app.get("/user/get_by_email/{email}")
 def get_by_email(email: str):
     try:
