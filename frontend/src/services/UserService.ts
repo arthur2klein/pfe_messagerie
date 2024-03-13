@@ -647,16 +647,14 @@ class UserService {
     }
   }
 
-  static async storePrivateKey(user: User, group: Group, key: string) {
+  static async storePrivateKey(user_id: string, group_id: string, key: string) {
     try {
       const response = await fetch(
-        `${apiUrl}:${apiPort}/key/private/store/${group.id}/${user.id}`,
+        `${apiUrl}:${apiPort}/key/private/store/${group_id}/${user_id}`,
         {
           method: 'POST',
           headers: { 'Content-type': 'application/json' },
-          body: JSON.stringify({
-            key
-          }),
+          body: key,
         },
       );
       const json = await response.json();
@@ -670,16 +668,14 @@ class UserService {
     }
   }
 
-  static async storePublicKey(user: User, group: Group, key: string) {
+  static async storePublicKey(user_id: string, group_id: string, key: string) {
     try {
       const response = await fetch(
-        `${apiUrl}:${apiPort}/key/public/store/${group.id}/${user.id}`,
+        `${apiUrl}:${apiPort}/key/public/store/${group_id}/${user_id}`,
         {
           method: 'POST',
           headers: { 'Content-type': 'application/json' },
-          body: JSON.stringify({
-            key
-          }),
+          body: key,
         },
       );
       const json = await response.json();
@@ -693,10 +689,10 @@ class UserService {
     }
   }
 
-  static async getPublicKey(user: User, group: Group): Promise<string | null> {
+  static async getPublicKey(user_id: string, group_id: string): Promise<string | null> {
     try {
       const response = await fetch(
-        `${apiUrl}:${apiPort}/key/public/get/${group.id}/${user.id}`
+        `${apiUrl}:${apiPort}/key/public/get/${group_id}/${user_id}`
       );
       const json = await response.json();
       if (json['error'] !== undefined) {
@@ -712,10 +708,10 @@ class UserService {
     }
   }
 
-  static async getPrivateKey(user: User, group: Group): Promise<string | null> {
+  static async getPrivateKey(user_id: string, group_id: string): Promise<string | null> {
     try {
       const response = await fetch(
-        `${apiUrl}:${apiPort}/key/private/get/${group.id}/${user.id}`
+        `${apiUrl}:${apiPort}/key/private/get/${group_id}/${user_id}`
       );
       const json = await response.json();
       if (json['error'] !== undefined) {
