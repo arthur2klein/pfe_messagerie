@@ -7,7 +7,6 @@ import Message from '../models/Message';
 import MessageComponent from '../components/MessageComponent';
 import SelectGroupComponent from '../components/SelectGroupComponent';
 import CreateMessageComponent from '../components/CreateMessageComponent';
-import Encryption from '../services/Encryption';
 
 const ViewMessagesPage: React.FC = () => {
   const [socket, setSocket] = useState<WebSocket|null>(null);
