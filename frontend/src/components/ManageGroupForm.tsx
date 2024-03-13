@@ -13,6 +13,7 @@ const ManageGroupForm: React.FC<ManageGroupFormProps> = ({group}) => {
   const [formData, setFormData] = useState({
     new_name: group.name,
     user_email: '',
+    user_name: '',
   });
   
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -33,6 +34,9 @@ const ManageGroupForm: React.FC<ManageGroupFormProps> = ({group}) => {
       }    
       if (formData.user_email !== "") {
         UserService.receiveGroupGrow(group.id, formData.user_email);
+        Encryption.createKey(group.id, UserService.currentUser!.id);
+      } else if (formData.user_name !== "") {
+        UserService.receiveGroupGrowName(group.id, formData.user_name);
         Encryption.createKey(group.id, UserService.currentUser!.id);
       }    
     } catch (error) {
@@ -63,6 +67,16 @@ const ManageGroupForm: React.FC<ManageGroupFormProps> = ({group}) => {
             name="user_email"
             placeholder="User to add"
             value={formData.user_email}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-field">
+          <label>or Name of user to add: </label>
+          <input
+            type="text"
+            name="user_name"
+            placeholder="User to add"
+            value={formData.user_name}
             onChange={handleChange}
           />
         </div>

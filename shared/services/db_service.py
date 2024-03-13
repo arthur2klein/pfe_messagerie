@@ -1040,6 +1040,18 @@ class Service_bdd:
                     )
         return User(*line[1:], id = line[0])
 
+    def get_user_name(self: Self, name: str) -> User:
+        query = 'SELECT * FROM "UserApp" WHERE LOWER("name") LIKE LOWER(%s)'
+        try:
+            lines = self.fetch_query(query, [name])
+        except IndexError:
+            return None
+        except Exception as e:
+            raise DatabaseException(
+                    f'Could not get the users with {name=}: {e}'
+                    )
+        return [User(*line[1:], id = line[0]) for line in lines]
+
     def get_user_email(self: Self, email: str) -> User:
         """ Returns the user with the given email.
         ---
@@ -1067,7 +1079,7 @@ class Service_bdd:
         assert(my_user == service_bdd.get_user_email('e@mail.com'))
         ```
         """
-        query = 'SELECT * FROM "UserApp" WHERE "email" = %s'
+        query = 'SELECT * FROM "UserApp" WHERE LOWER("email") = LOWER(%s)'
         try:
             line = self.fetch_query(query, [email])[0]
         except IndexError:
