@@ -468,6 +468,29 @@ class UserService {
     }
   }
 
+  static async getUserGroup(group_id: string): Promise<User[]> {
+    try {
+      const response = await fetch(
+        `${apiUrl}:${apiPort}/group/get_users/${group_id}`
+      );
+      const json = await response.json();
+      if (json['error'] !== undefined) {
+        console.error(
+          `Error while fetching users for group ${group_id}: ${json['error']}`,
+        );
+        return [];
+      }
+      const users_json = json['users'];
+      if (users_json === undefined) {
+        return [];
+      }
+      return users_json as User[];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
   static disconnect() {
     this.currentUser = undefined;
   }

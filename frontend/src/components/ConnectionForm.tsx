@@ -1,8 +1,11 @@
 import {useState} from 'react';
 import './ConnectionForm.css'
 import UserService from '../services/UserService';
+import {useNavigate} from 'react-router-dom';
 
 const ConnectionForm: React.FC = () => {
+
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -22,7 +25,10 @@ const ConnectionForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      UserService.receiveConnection(formData);
+      await UserService.receiveConnection(formData);
+      if (UserService.currentUser !== undefined) {
+        navigate('/');
+      }
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message)
