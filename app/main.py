@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from typing import List, Annotated, Union
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, Depends, HTTPException, WebSocket, WebSocketDisconnect, Body
+from fastapi import Request, FastAPI, Depends, HTTPException, WebSocket, WebSocketDisconnect, Body
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.middleware.cors import CORSMiddleware
 from jose import JWTError, jwt
@@ -485,6 +485,64 @@ def get_media_by_message(message_id: str):
                     for element in bdd_service.get_medias_message(message_id)
                     ]
                 }
+    except DatabaseException as e:
+        res = {"error": str(e)}
+    return res
+
+@app.get("/key/public/get/{group_id}/{user_id}")
+def get_public_key(group_id: str, user_id: str):
+    try:
+        logging.info(
+                f"Récupération de la clé public du "
+                f"group {group_id} user {user_id}"
+                )
+        res = {"key": bdd_service.get_public_key(group_id, user_id)}
+    except DatabaseException as e:
+        res = {"error": str(e)}
+    return res
+
+@app.get("/key/private/get/{group_id}/{user_id}")
+def get_private_key(group_id: str, user_id: str):
+    try:
+        logging.info(
+                f"Récupération de la clé privée du "
+                f"group {group_id} user {user_id}"
+                )
+        res = {"key": bdd_service.get_private_key(group_id, user_id)}
+    except DatabaseException as e:
+        res = {"error": str(e)}
+    return res
+
+@app.post("/key/private/store/{group_id}/{user_id}")
+async def store_private_key(
+        group_id: str,
+        user_id: str,
+        request: Request,
+        ):
+    try:
+        logging.info(
+                "Stockage de la clé privée de group {group_id} user {user_id}"
+                )
+        key = await request.body()
+        bdd_service.store_private_key(group_id, user_id, key)
+        res = {}
+    except DatabaseException as e:
+        res = {"error": str(e)}
+    return res
+
+@app.post("/key/public/store/{group_id}/{user_id}")
+async def store_public_key(
+        group_id: str,
+        user_id: str,
+        request: Request,
+        ):
+    try:
+        logging.info(
+                "Stockage de la clé public de group {group_id} user {user_id}"
+                )
+        key = await request.body()
+        bdd_service.store_public_key(group_id, user_id, key)
+        res = {}
     except DatabaseException as e:
         res = {"error": str(e)}
     return res

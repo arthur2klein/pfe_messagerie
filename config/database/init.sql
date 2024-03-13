@@ -41,3 +41,17 @@ CREATE TABLE IF NOT EXISTS "Media" (
     link VARCHAR(255) NOT NULL,
     message_id INT REFERENCES "Message" (id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS "PublicKey" (
+    id SERIAL PRIMARY KEY,
+    group_id VARCHAR(255) NOT NULL,
+    user_id VARCHAR(255) NOT NULL,
+    key TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "PrivateKey" (
+    id SERIAL PRIMARY KEY,
+    group_id VARCHAR(255) NOT NULL,
+    user_id VARCHAR(255) NOT NULL,
+    key TEXT NOT NULL
+);
