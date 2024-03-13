@@ -2,6 +2,7 @@ import {useState} from 'react';
 import './ManageGroupForm.css'
 import UserService from '../services/UserService';
 import Group from '../models/Group';
+import Encryption from '../services/Encryption';
 
 interface ManageGroupFormProps {
   group: Group,
@@ -32,6 +33,7 @@ const ManageGroupForm: React.FC<ManageGroupFormProps> = ({group}) => {
       }    
       if (formData.user_email !== "") {
         UserService.receiveGroupGrow(group.id, formData.user_email);
+        Encryption.createKey(group.id, UserService.currentUser!.id);
       }    
     } catch (error) {
       if (error instanceof Error) {

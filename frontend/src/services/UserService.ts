@@ -7,6 +7,7 @@ const apiUrl: string = process.env.API_URL || "http://localhost";
 const apiPort: string = process.env.API_PORT || "8000";
 
 class UserService {
+
   static currentUser: User|undefined = undefined;
 
   // Test data
@@ -643,6 +644,86 @@ class UserService {
     } catch (error) {
       toast.error("Could not add this user to the group");
       console.error(error);
+    }
+  }
+
+  static async storePrivateKey(user_id: string, group_id: string, key: string) {
+    try {
+      const response = await fetch(
+        `${apiUrl}:${apiPort}/key/private/store/${group_id}/${user_id}`,
+        {
+          method: 'POST',
+          headers: { 'Content-type': 'application/json' },
+          body: key,
+        },
+      );
+      const json = await response.json();
+      if (json['error'] !== undefined) {
+        console.error(
+          `Error while creating the key: ${json['error']}`,
+        );
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  static async storePublicKey(user_id: string, group_id: string, key: string) {
+    try {
+      const response = await fetch(
+        `${apiUrl}:${apiPort}/key/public/store/${group_id}/${user_id}`,
+        {
+          method: 'POST',
+          headers: { 'Content-type': 'application/json' },
+          body: key,
+        },
+      );
+      const json = await response.json();
+      if (json['error'] !== undefined) {
+        console.error(
+          `Error while creating the key: ${json['error']}`,
+        );
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  static async getPublicKey(user_id: string, group_id: string): Promise<string | null> {
+    try {
+      const response = await fetch(
+        `${apiUrl}:${apiPort}/key/public/get/${group_id}/${user_id}`
+      );
+      const json = await response.json();
+      if (json['error'] !== undefined) {
+        console.error(
+          `Error while fetching key: ${json['error']}`,
+        );
+        return null;
+      }
+      return json['key'];
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+
+  static async getPrivateKey(user_id: string, group_id: string): Promise<string | null> {
+    try {
+      const response = await fetch(
+        `${apiUrl}:${apiPort}/key/private/get/${group_id}/${user_id}`
+      );
+      const json = await response.json();
+      if (json['error'] !== undefined) {
+        console.error(
+          `Error while fetching key: ${json['error']}`,
+        );
+        return null;
+      }
+      return json['key'];
+    } catch (error) {
+      console.error(error);
+      return null;
     }
   }
 

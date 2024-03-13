@@ -1229,3 +1229,73 @@ class Service_bdd:
             return next(user_iterator)
         except StopIteration:
             return None
+
+    def store_public_key(
+            self: Self,
+            group_id: str,
+            user_id: str,
+            key: str
+            ):
+        query = ('INSERT INTO "PublicKey" (group_id, user_id, key) '
+                 'VALUES (%s, %s, %s)')
+        try:
+            self.change_query(query, [group_id, user_id, key])
+        except Exception as e:
+            raise DatabaseException(
+                    f'Could not store the key group {group_id} '
+                    f'user {user_id}: {e}.'
+                    )
+
+    def store_private_key(
+            self: Self,
+            group_id: str,
+            user_id: str,
+            key: str
+            ):
+        query = ('INSERT INTO "PrivateKey" (group_id, user_id, key) '
+                 'VALUES (%s, %s, %s)')
+        try:
+            self.change_query(query, [group_id, user_id, key])
+        except Exception as e:
+            raise DatabaseException(
+                    f'Could not store the key group {group_id} '
+                    f'user {user_id}: {e}.'
+                    )
+
+    def get_public_key(
+            self: Self,
+            group_id: str,
+            user_id: str,
+            ) -> str:
+        try:
+            query_result = self.fetch_query(
+                    'SELECT key FROM "PublicKey" '
+                    'WHERE "group_id" = %s '
+                    'AND "user_id" = %s ',
+                    [group_id, user_id]
+                    )
+            return query_result[0][0]
+        except Exception as e:
+            raise DatabaseException(
+                    f'Could not get the key group {group_id} '
+                    f'user {user_id}: {e}.'
+                    )
+
+    def get_private_key(
+            self: Self,
+            group_id: str,
+            user_id: str,
+            ) -> str:
+        try:
+            query_result = self.fetch_query(
+                    'SELECT key FROM "PrivateKey" '
+                    'WHERE "group_id" = %s '
+                    'AND "user_id" = %s ',
+                    [group_id, user_id]
+                    )
+            return query_result[0][0]
+        except Exception as e:
+            raise DatabaseException(
+                    f'Could not get the key group {group_id} '
+                    f'user {user_id}: {e}.'
+                    )

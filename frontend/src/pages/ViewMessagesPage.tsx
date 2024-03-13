@@ -7,6 +7,7 @@ import Message from '../models/Message';
 import MessageComponent from '../components/MessageComponent';
 import SelectGroupComponent from '../components/SelectGroupComponent';
 import CreateMessageComponent from '../components/CreateMessageComponent';
+import Encryption from '../services/Encryption';
 
 const ViewMessagesPage: React.FC = () => {
   const [socket, setSocket] = useState<WebSocket|null>(null);
@@ -80,6 +81,11 @@ const ViewMessagesPage: React.FC = () => {
   };
 
   const receiveMessage = async (messageContent: string): Promise<void> => {
+    // const encrypted = await Encryption.encrypt(
+    //   messageContent,
+    //   UserService.currentUser!.id,
+    //   selectedGroup.id
+    // );
     const new_message = await UserService.sendMessage(
       messageContent,
       selectedGroup.id
@@ -95,7 +101,7 @@ const ViewMessagesPage: React.FC = () => {
       {selectedGroup.id === ""?
         <h1>Please chose a group to display the messages</h1>
         :messages.map(m => (
-          <MessageComponent message={m} />
+          <MessageComponent message={m} group_id={selectedGroup.id} />
         ))
       }
       {selectedGroup.id !== ""?

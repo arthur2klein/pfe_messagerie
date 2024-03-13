@@ -4,9 +4,11 @@ import User from '../models/User';
 import UserService from '../services/UserService';
 import './MessageComponent.css';
 import Group from '../models/Group';
+import Encryption from '../services/Encryption';
 
 interface MessageComponentProps {
   message: Message,
+  group_id: string,
 }
 
 const MessageComponent: React.FC<MessageComponentProps> = (
@@ -15,6 +17,7 @@ const MessageComponent: React.FC<MessageComponentProps> = (
 
   const [sender, setSender] = useState<User>();
   const [receiver, setReceiver] = useState<Group>();
+  const [decrypted, setDecrypted] = useState<string>('');
 
   const fetchData = useCallback(async () => {
     const senderData = await UserService.getUserFromId(
@@ -25,7 +28,18 @@ const MessageComponent: React.FC<MessageComponentProps> = (
     ) ?? undefined;
     setSender(senderData);
     setReceiver(receiverData);
-  }, [props.message.sender_id, props.message.receiver_group_id]);
+    // const message_decrypted = await Encryption.decrypt(
+    //   props.message.content,
+    //   UserService.currentUser!.id,
+    //   props.group_id
+    // );
+    setDecrypted(props.message.content);
+  }, [
+    props.message.sender_id,
+    props.message.receiver_group_id,
+    props.message.content,
+    props.group_id
+  ]);
 
   useEffect(() => {
     fetchData();
@@ -36,7 +50,7 @@ const MessageComponent: React.FC<MessageComponentProps> = (
 
   return sender? (
     <div className={`message ${isSender? "sender": "receiver"}`}>
-      <div className="message-content">{ props.message.content }</div>
+      <div className="message-content">{ decrypted }</div>
       <div className="message-sender">{ sender?.name || '' } { sender?.first_name || '' }</div>
       <div className="message-receiver">{ receiver?.name || '' }</div>
       <div className="message-date">{ date.toLocaleString() }</div>

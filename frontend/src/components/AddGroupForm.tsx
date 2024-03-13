@@ -2,6 +2,7 @@ import {useState} from 'react';
 import './AddGroupForm.css'
 import UserService from '../services/UserService';
 import Group from '../models/Group';
+import Encryption from '../services/Encryption';
 
 interface GroupAddComponentProps {
   onGroupAdd: (newGroup: Group) => void;
@@ -29,6 +30,7 @@ const AddGroupForm: React.FC<GroupAddComponentProps> = ({ onGroupAdd }) => {
       const group = await UserService.receiveGroupAdd(formData.name);
       if (group !== null && UserService.currentUser !== undefined) {
         UserService.receiveGroupGrow(group.id, UserService.currentUser.email);
+        Encryption.createKey(group.id, UserService.currentUser!.id);
         onGroupAdd(group);
       }
     } catch (error) {
