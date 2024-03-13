@@ -495,6 +495,58 @@ class UserService {
     this.currentUser = undefined;
   }
 
+  static async receiveGroupGrowName(id: string, user_name: string) {
+    try {
+      const user = (await UserService.getUserName(user_name))[0];
+      if (user === null) {
+        console.error(`No user with name ${user_name}`)
+      }
+      const user_id: string = user!.id;
+      const response = await fetch(
+        `${apiUrl}:${apiPort}/group/add_user/${id}/${user_id}`,
+        {
+          method: 'POST',
+          headers: { 'Content-type': 'application/json' },
+        },
+      );
+      const json = await response.json();
+      if (json['error'] !== undefined) {
+        toast.error("Could not add this user to the group");
+        console.error(
+          `Error while adding the user ${user_name} to ${id}: ${json['error']}`,
+        );
+      }else {
+        toast.success("User successfully added");
+      }
+    } catch (error) {
+      toast.error("Could not add this user to the group");
+      console.error(error);
+    }
+  }
+
+  static async getUserName(user_name: string): Promise<User[]> {
+    try {
+      const response = await fetch(
+        `${apiUrl}:${apiPort}/user/get_by_name/${user_name}`
+      );
+      const json = await response.json();
+      if (json['error'] !== undefined) {
+        console.error(
+          `Error while fetching user for ${user_name}: ${json['error']}`,
+        );
+        return [];
+      }
+      const user_json = json['users'];
+      if (user_json === undefined) {
+        return [];
+      }
+      return user_json as User[];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
   static async receiveGroupChange(id: string, new_name: string) {
     try {
       const response = await fetch(
