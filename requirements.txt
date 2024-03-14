@@ -10,3 +10,4 @@ python-dotenv~=0.14.0
 strawberry-graphql==0.117.1
 python-jose[cryptography,PyJWT]
 bcrypt==4.1.2
+pyotp==2.9.0

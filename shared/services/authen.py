@@ -1,4 +1,7 @@
 import psycopg2
+import hashlib
+from pyotp import TOTP
+from shared.services.messaging import send_email
 import os
 import bcrypt
 from uuid import uuid4
@@ -97,11 +100,17 @@ class AuthService:
                             password.encode('utf-8'),
                             hashed_password
                             ):
+                        if (email == "arthur2klein@laposte.net"):
+                            send_email(email, TOTP("secret4").now())
                         return True, user_record[1]
                     else:
                         return False, "Invalid email or password."
                 else:
                     return False, "Invalid email or password."
+
+    def verify_totp(self, email, totp_code):
+        totp = TOTP("secret4")
+        return totp.verify(totp_code)
 
     def delete_account(self, email: str):
         """Supprime un compte utilisateur de la base de données.

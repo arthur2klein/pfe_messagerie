@@ -1,0 +1,12 @@
+.user {
+  display: flex;
+  flex-direction: row;
+  & > * {
+    margin: 1rem;
+  }
+}
+
+.listUsers {
+  background-color: var(--secondary-background);
+  border-radius: 1rem;
+}
