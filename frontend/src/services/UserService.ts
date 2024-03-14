@@ -316,6 +316,7 @@ class UserService {
         console.error(
           `Error while changing the auth user: ${json['error']}`,
         );
+        return;
       }
       this.currentUser = await UserService.getUserEmail(
         formData.email
