@@ -63,7 +63,7 @@ services:
       dockerfile: docker/frontend.dockerfile
     container_name: front
     environment:
-      - API_URL=http://localhost
+      - API_URL=http://172.17.8.62
       - API_PORT=http://8000
     networks:
       - frontend
