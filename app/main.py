@@ -555,3 +555,20 @@ async def store_public_key(
     except DatabaseException as e:
         res = {"error": str(e)}
     return res
+
+@app.post("/totp/verify")
+def verify_totp(
+        email: Annotated[str, Body()],
+        code: Annotated[str, Body()],
+        ):
+    try:
+        logging.info(
+                "Verification de la double authentification pour {email}"
+                )
+        if auth_service.verify_totp(email, code):
+            res = {}
+        else:
+            res = {"error": "Code not recognized"}
+    except DatabaseException as e:
+        res = {"error": str(e)}
+    return res

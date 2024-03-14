@@ -1,6 +1,11 @@
+import AdminComponent from '../components/AdminComponent';
+import UserService from '../services/UserService';
 import './HomePage.css'
 
 const HomePage: React.FC = () => {
+  if (UserService.isAdmin()) {
+    return <div className='container'><AdminComponent /></div>;
+  }
   return (
     <div className="container">
       <h1>Welcome to our Messaging app !!!</h1>
@@ -14,3 +19,4 @@ const HomePage: React.FC = () => {
 }
 
 export default HomePage;
+

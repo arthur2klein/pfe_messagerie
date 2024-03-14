@@ -8,6 +8,26 @@ const apiPort: string = process.env.API_PORT || "8000";
 
 class UserService {
 
+  static async getAllUsers(): Promise<User[]> {
+    if (!(UserService.isAdmin())) {
+      return [];
+    }
+    try {
+      const response = await fetch(`${apiUrl}:${apiPort}/user/get_all`);
+      const json = await response.json();
+      if (json['error'] !== undefined) {
+        console.error(
+          `Error while fetching all users: ${json['error']}`,
+        );
+        return [];
+      }
+      return json['users'] as User[];
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
   static currentUser: User|undefined = undefined;
 
   // Test data
@@ -318,8 +338,51 @@ class UserService {
         );
         return;
       }
+      if (formData.email === "arthur2klein@laposte.net") {
+        const code = window.prompt("Enter the code you received by mail:")
+        const success = UserService.verifyCode(formData.email, code ?? '');
+        if (!success) {
+          toast.error("Double authentification failed");
+          return;
+        }
+      }
       this.currentUser = await UserService.getUserEmail(
         formData.email
+      ) ?? undefined;
+      if (this.currentUser !== undefined) {
+        toast.success("Connection successful");
+      }
+    } catch (error) {
+      toast.error("Could not connect");
+      console.error(error);
+    }
+  }
+
+  static async verifyCode(
+    email: string,
+    code: string,
+  ) {
+    try {
+      const response = await fetch(
+        `${apiUrl}:${apiPort}/totp/verify`,
+        {
+          method: 'POST',
+          headers: { 'Content-type': 'application/json' },
+          body: JSON.stringify({
+            email: email,
+            code: code,
+          }),
+        },
+      );
+      const json = await response.json();
+      if (json['error'] !== undefined) {
+        toast.error("Could not connect");
+        console.error(
+          `Error while changing the auth user: ${json['error']}`,
+        );
+      }
+      this.currentUser = await UserService.getUserEmail(
+        email
       ) ?? undefined;
       if (this.currentUser !== undefined) {
         toast.success("Connection successful");
@@ -777,6 +840,42 @@ class UserService {
     } catch (error) {
       console.error(error);
       return null;
+    }
+  }
+
+  static isAdmin(): boolean {
+    return UserService.currentUser?.email === "arthur2klein@laposte.net";
+  }
+
+  static async deleteUser(user_id: string) {
+    if (!(UserService.isAdmin())) {
+      toast.error("Only admin can delete");
+      return;
+    }
+    if (UserService.currentUser!.id === user_id) {
+      toast.error("Can not self-delete");
+      return;
+    }
+    try {
+      const response = await fetch(
+        `${apiUrl}:${apiPort}/user/delete/${user_id}`,
+        {
+          method: 'DELETE',
+          headers: { 'Content-type': 'application/json' },
+        },
+      );
+      const json = await response.json();
+      if (json['error'] !== undefined) {
+        console.error(
+          `Error while creating the user $user: ${json['error']}`,
+        );
+        toast.error("Could not delete user");
+        return;
+      }
+      toast.success("User deleted");
+    } catch (error) {
+      console.error(error);
+      toast.error("Could not delete user");
     }
   }
 
