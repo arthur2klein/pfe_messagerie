@@ -7,7 +7,7 @@ Sujet de PFE à CY-Tech.
 - ABDESSALEM Rayan (CyberSécurite),
 - DJEUFA Emmanuella (ICC),
 - KLEIN Arthur (ICC),
-- SILATCHA Russelle (ICC).
+- KAMGAING Rodrigue (ICC).
 
 ## Sujet
 Création d'une application de messagerie sécurisée.
