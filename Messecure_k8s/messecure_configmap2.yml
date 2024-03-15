@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: messecure-config2
+  namespace: messecure-ns
+data:
+  init.sql: |
+    CREATE ROLE minimal_user WITH LOGIN PASSWORD 'minimal_password';
+    GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO minimal_user;
+    CREATE ROLE my_user WITH LOGIN PASSWORD 'my_password';
+    GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO my_user;
+
+    CREATE TABLE IF NOT EXISTS MyUser (
+        auth_id UUID PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL
+    );

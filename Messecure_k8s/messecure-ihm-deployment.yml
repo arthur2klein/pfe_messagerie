@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messecure-frontend-deployment
+  namespace: messecure-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: messecure-frontend
+  template:
+    metadata:
+      labels:
+        app: messecure-frontend
+    spec:
+      containers:
+        - name: front
+          image: kleinarthu/pfe_frontend:1.0
+          ports:
+            - containerPort: 3000
+          env:
+            - name: API_URL
+              value: "http://messecure-backend-service"
+            - name: API_PORT
+              value: "8000"
+          restartPolicy: Always

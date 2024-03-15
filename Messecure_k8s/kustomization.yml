@@ -1,0 +1,19 @@
+resources:
+  - namespace.yml
+  - messecure_configmap.yml
+  - messecure_configmap2.yml
+  - messecure-secrets.yml
+  - messecure-secrets2.yml
+  - pv.yml
+  - pv2.yml
+  - pvc.yml
+  - pvc2.yml
+  - postgres-deployment.yml
+  - postgres-service.yml
+  - postgres-auth-deployment.yml
+  - postgres-auth-service.yml
+  - messecure-api-deployment.yml
+  - messecure-api-service.yml
+  - messecure-ihm-deployment.yml
+  - messecure-ihm-service.yml
+  - ingress-messecure.yml

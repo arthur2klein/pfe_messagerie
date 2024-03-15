@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messecure-backend-deployment
+  namespace: messecure-ns
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: messecure-backend
+  template:
+    metadata:
+      labels:
+        app: messecure-backend
+    spec:
+      containers:
+        - name: messecure-api
+          image: kleinarthu/pfe_api:1.0
+          ports:
+          - containerPort: 8000
+          env:
+          - name: PG_USER
+            valueFrom:
+              secretKeyRef:
+                name: messecure-secrets2
+                key: PG_USER
+          - name: PG_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: messecure-secrets2
+                key: PG_DATABASE
+          - name: PG_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: messecure-secrets2
+                key: PG_PASSWORD
+          - name: PG_HOST
+            value: postgres-service
+          - name: DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: messecure-secrets2
+                key: DATABASE
+          - name: USER
+            valueFrom:
+              secretKeyRef:
+                name: messecure-secrets2
+                key: USER
+          - name: PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: messecure-secrets2
+                key: PASSWORD
+          - name: HOST
+            value: postgres-service
+          - name: PORT
+            valueFrom:
+              secretKeyRef:
+                name: messecure-secrets2
+                key: PORT
+          - name: AUTH_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: messecure-secrets2
+                key: AUTH_DATABASE
+          - name: AUTH_USER
+            valueFrom:
+              secretKeyRef:
+                name: messecure-secrets2
+                key: AUTH_USER
+          - name: AUTH_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: messecure-secrets2
+                key: AUTH_PASSWORD
+          - name: AUTH_HOST
+            value: auth-db-service
+          - name: AUTH_PORT
+            valueFrom:
+              secretKeyRef:
+                name: messecure-secrets2
+                key: AUTH_PORT          
+          restartPolicy: Always

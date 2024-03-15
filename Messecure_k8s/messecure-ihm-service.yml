@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: messecure-frontend-nodeport-service
+  namespace: messecure-ns
+spec:
+  selector:
+    app: messecure-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+      nodePort: 30001
+  type: NodePort
